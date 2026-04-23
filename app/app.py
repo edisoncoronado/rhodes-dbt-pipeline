@@ -3,7 +3,6 @@ import pandas as pd
 import snowflake.connector
 import plotly.express as px
 import os
-
 import base64
 
 logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
@@ -33,18 +32,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
-#st.title("Rhodes Homebuilder Sales Dashboard")
-#col_logo, col_title = st.columns([1, 4])
-
-
-
-#with col_logo:
-#    st.image(logo_path, width=120)
-
-#with col_title:
-#    st.title("Rhodes Homebuilder Sales Dashboard")
 
 
 # Connect to Snowflake using Streamlit secrets
@@ -85,11 +72,11 @@ selected_column = perspectives.loc[
     "column"
 ].values[0]
  
-# region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
+region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
 
 
-#if region != "All":
-    #df = df[df["REGION"] == region]
+if region != "All":
+    df = df[df["REGION"] == region]
 
 # Metrics
 st.subheader("Sales Overview")
@@ -118,8 +105,6 @@ color_map = {
 }
 
 # Chart 1
-# st.subheader("Sales by Region")
-# st.bar_chart(df.groupby("REGION")["CONTRACT_ID"].count())
 
 sales = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
 sales = sales.sort_values(by="CONTRACT_ID", ascending=False)
@@ -138,8 +123,6 @@ fig1 = px.bar(
 st.plotly_chart(fig1)
 
 # Chart 2
-# st.subheader("Cancellation Rate")
-# st.bar_chart(df.groupby("REGION")["CANCELLATION_FLAG"].mean())
 
 cancellation_rate = df.groupby(selected_column)["CANCELLATION_FLAG"].mean().reset_index()
 cancellation_rate = cancellation_rate.sort_values(by="CANCELLATION_FLAG", ascending=False)
