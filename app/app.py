@@ -106,7 +106,7 @@ if buyer_source != "All":
 
 status = st.sidebar.selectbox("Select Status", ["All"] + sorted(df["STATUS"].dropna().unique().tolist()))
 if status != "All":
-    df = df[df["BUYER_SOURCE"] == status]
+    df = df[df["STATUS"] == status]
 
 
 min_price = int(df["CONTRACT_PRICE"].min())
