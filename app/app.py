@@ -38,6 +38,13 @@ col1.metric("Total Sales", len(df))
 col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
 col3.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
+color_map = {
+    "Rio Grande Valley": "#5DA5A4",   # teal
+    "South Texas": "#E3C26F",         # gold
+    "Coastal Bend": "#E88E64"         # orange
+}
+
+
 # Chart 1
 # st.subheader("Sales by Region")
 # st.bar_chart(df.groupby("REGION")["CONTRACT_ID"].count())
@@ -50,18 +57,30 @@ fig = px.bar(
     x="REGION",
     y="CONTRACT_ID",
     color="REGION", 
+    color_discrete_map=color_map,
     title="Sales by Region",
-    labels={"CONTRACT_ID": "Total Sales"},
-    color_discrete_sequence=px.colors.qualitative.Pastel
+    labels={"CONTRACT_ID": "Total Sales"}
 )
 
 
 st.plotly_chart(fig)
 
 # Chart 2
-st.subheader("Cancellation Rate")
-st.bar_chart(df.groupby("REGION")["CANCELLATION_FLAG"].mean())
+# st.subheader("Cancellation Rate")
+# st.bar_chart(df.groupby("REGION")["CANCELLATION_FLAG"].mean())
 
+cancellation_rate = df.groupby("REGION")["CANCELLATION_FLAG"].mean().reset_index()
+cancellation_rate = cancellation_rate.sort_values(by="CANCELLATION_FLAG", ascending=False)
+
+fig = px.bar(
+    cancellation_rate,
+    x="REGION",
+    y="CANCELLATION_FLAG",
+    color="REGION", 
+    color_discrete_map=color_map,
+    title="Cancellation Rate",
+    labels={"CANCELLATION_FLAG": "Rate Canceled"}
+)
 # Chart 3
 st.subheader("Avg Price per Sqft")
 st.bar_chart(df.groupby("REGION")["PRICE_PER_SQUARE_FOOT"].mean())
