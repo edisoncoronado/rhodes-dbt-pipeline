@@ -42,15 +42,15 @@ col3.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 # st.subheader("Sales by Region")
 # st.bar_chart(df.groupby("REGION")["CONTRACT_ID"].count())
 
-region_sales = df.groupby("region")["contract_id"].count().reset_index()
-region_sales = region_sales.sort_values(by="contract_id", ascending=False)
+region_sales = df.groupby("REGION")["CONTRACT_ID"].count().reset_index()
+region_sales = region_sales.sort_values(by="CONTRACT_ID", ascending=False)
 
 fig = px.bar(
     region_sales,
-    x="region",
-    y="contract_id",
+    x="REGION",
+    y="CONTRACT_ID",
     title="Sales by Region",
-    labels={"contract_id": "Total Sales"}
+    labels={"CONTRACT_ID": "Total Sales"}
 )
 
 st.plotly_chart(fig)
