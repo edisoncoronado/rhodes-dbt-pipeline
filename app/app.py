@@ -165,7 +165,7 @@ sqft_range = st.sidebar.slider(
     max_value=max_sqft,
     value=(min_sqft, max_sqft),
     step=50,
-    format="0"
+    format="%d"
 )
 df = df[
     (df["SQFT"] >= sqft_range[0]) &
