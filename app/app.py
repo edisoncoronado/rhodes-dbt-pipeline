@@ -24,10 +24,30 @@ FROM RHODES_DWH.ANALYTICS.FCT_HOMEBUILDER_SALES
 df = pd.read_sql(query, conn)
 
 # Sidebar filter
-region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
+names = ["Region","Community","City","Plan Name","Loan Type","Sales Consultant","Regional Manager"]
 
-if region != "All":
-    df = df[df["REGION"] == region]
+columns = ["REGION","COMMUNITY","CITY","PLAN_NAME","LOAN_TYPE","SALES_CONSULTANT","REGIONAL_MANAGER"]
+
+perspectives = pd.DataFrame({
+    'name': names,
+    'column': columns
+})
+
+perspective = st.sidebar.selectbox(
+    "Select Perspective",
+    perspectives["name"].tolist()
+)
+
+selected_column = perspectives.loc[
+    perspectives["name"] == perspective,
+    "column"
+].values[0]
+ 
+# region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
+
+
+#if region != "All":
+    #df = df[df["REGION"] == region]
 
 # Metrics
 st.subheader("Sales Overview")
@@ -57,16 +77,15 @@ color_map = {
 # st.subheader("Sales by Region")
 # st.bar_chart(df.groupby("REGION")["CONTRACT_ID"].count())
 
-region_sales = df.groupby("REGION")["CONTRACT_ID"].count().reset_index()
-region_sales = region_sales.sort_values(by="CONTRACT_ID", ascending=False)
+sales = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
+sales = sales.sort_values(by="CONTRACT_ID", ascending=False)
 
 fig1 = px.bar(
-    region_sales,
-    x="REGION",
+    sales,
+    x=column,
     y="CONTRACT_ID",
-    color="REGION", 
-    color_discrete_map=color_map,
-    title="Sales by Region",
+    color=selected_column, 
+    title=f"Sales by {perspective}",
     labels={"CONTRACT_ID": "Total Sales"}
 )
 
@@ -77,15 +96,14 @@ st.plotly_chart(fig1)
 # st.subheader("Cancellation Rate")
 # st.bar_chart(df.groupby("REGION")["CANCELLATION_FLAG"].mean())
 
-cancellation_rate = df.groupby("REGION")["CANCELLATION_FLAG"].mean().reset_index()
+cancellation_rate = df.groupby(selected_column)["CANCELLATION_FLAG"].mean().reset_index()
 cancellation_rate = cancellation_rate.sort_values(by="CANCELLATION_FLAG", ascending=False)
 
 fig2 = px.bar(
     cancellation_rate,
-    x="REGION",
+    x=selected_column,
     y="CANCELLATION_FLAG",
-    color="REGION", 
-    color_discrete_map=color_map,
+    color=selected_column, 
     title="Cancellation Rate",
     labels={"CANCELLATION_FLAG": "Rate Canceled"}
 )
@@ -96,6 +114,3 @@ fig2.update_layout(
 
 st.plotly_chart(fig2)
 
-# Chart 3
-st.subheader("Avg Price per Sqft")
-st.bar_chart(df.groupby("REGION")["PRICE_PER_SQUARE_FOOT"].mean())
