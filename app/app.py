@@ -318,7 +318,7 @@ st.sidebar.caption(
 # Metrics
 st.subheader("Sales Overview")
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 total_sold = df["SOLD_FLAG"].sum()
 total_records = len(df)
@@ -336,7 +336,14 @@ incentive_amount = df["INCENTIVE_AMOUNT"].sum()
 
 col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
 col3.metric("Total Sales", f"${df['CONTRACT_PRICE'].sum():,.0f}", f"${total_base:,.0f} + ${upgrade_amount:.0f} - ${incentive_amount:.0f} of total")
+
+
+col4, col5, col6 = st.columns(3)
+
 col4.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
+col5.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
+col6.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
+
 
 category_values = sorted(df[selected_column].dropna().unique().tolist())
 
