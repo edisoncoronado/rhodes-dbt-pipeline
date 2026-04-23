@@ -334,9 +334,15 @@ upgrade_amount = df["UPGRADE_AMOUNT"].sum()
 incentive_amount = df["INCENTIVE_AMOUNT"].sum()
 
 
-col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
-col3.metric("Total Sales", f"${df['CONTRACT_PRICE'].sum():,.0f}", f"${total_base:,.0f} + ${upgrade_amount:.0f} - ${incentive_amount:.0f} of total")
+col2.metric("Avg Contract", f"${df['CONTRACT_PRICE'].mean():,.0f}")
+col3.metric(
+    "Total Sales",
+    f"${total_sales:,.0f}"
+)
 
+col3.caption(
+    f"${total_base:,.0f} + ${upgrade_amount:,.0f} - ${incentive_amount:,.0f}"
+)
 
 col4, col5, col6 = st.columns(3)
 
@@ -359,8 +365,8 @@ color_map = {
 
 # Chart 1
 
-sales = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
-sales = sales.sort_values(by="CONTRACT_ID", ascending=False)
+sales = df.groupby(selected_column)["CONTRACT_PRICE"].sum().reset_index()
+sales = sales.sort_values(by="CONTRACT_PRICE", ascending=False)
 
 fig1 = px.bar(
     sales,
@@ -371,7 +377,7 @@ fig1 = px.bar(
     title=f"Contracts by {perspective}",
     labels={
         selected_column: perspective,       
-        "CONTRACT_ID": "Total Contracts"
+        "CONTRACT_ID": "Total Sales of Contracts"
     }
 )
 
@@ -389,10 +395,10 @@ fig1 = px.bar(
     y="CONTRACT_ID",
     color=selected_column, 
     color_discrete_map=color_map,
-    title=f"Sales by {perspective}",
+    title=f"Count of Contracts by {perspective}",
     labels={
         selected_column: perspective,       
-        "CONTRACT_ID": "Total Sales"
+        "CONTRACT_ID": "Count of Contracts"
     }
 )
 
