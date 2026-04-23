@@ -71,6 +71,8 @@ selected_column = perspectives.loc[
     perspectives["name"] == perspective,
     "column"
 ].values[0]
+
+
  
 region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
 if region != "All":
@@ -210,7 +212,10 @@ fig1 = px.bar(
     color=selected_column, 
     color_discrete_map=color_map,
     title=f"Sales by {perspective}",
-    labels={"CONTRACT_ID": "Total Sales"}
+    labels={
+        selected_column: perspective,       
+        "CONTRACT_ID": "Total Sales"
+    }
 )
 
 
@@ -228,7 +233,10 @@ fig2 = px.bar(
     color=selected_column, 
     color_discrete_map=color_map,
     title="Cancellation Rate",
-    labels={"CANCELLATION_FLAG": "Rate Canceled"}
+    labels={
+        selected_column: perspective,       
+        "CANCELLATION_FLAG": "Rate Canceled"
+    }
 )
 
 fig2.update_layout(
