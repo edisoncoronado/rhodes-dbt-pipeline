@@ -52,7 +52,7 @@ fig = px.bar(
     color="REGION", 
     title="Sales by Region",
     labels={"CONTRACT_ID": "Total Sales"},
-    color_discrete_sequence=x.colors.qualitative.Pastel
+    color_discrete_sequence=px.colors.qualitative.Pastel
 )
 
 
