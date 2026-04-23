@@ -187,35 +187,6 @@ df = df[
     (df["PRICE_PER_SQUARE_FOOT"] <= ppsf_range[1])
 ]
 
-min_commission = int(df["AGENT_COMMISSION"].min())
-max_commission = int(df["AGENT_COMMISSION"].max())
-commission_range = st.sidebar.slider(
-    "Agent Commission Range",
-    min_value=min_commission,
-    max_value=max_commission,
-    value=(min_commission, max_commission),
-    step=250,
-    format="$%d"
-)
-df = df[
-    (df["AGENT_COMMISSION"] >= commission_range[0]) &
-    (df["AGENT_COMMISSION"] <= commission_range[1])
-]
-
-min_days_closed = int(df["DAYS_TO_CLOSE"].min())
-max_days_closed = int(df["DAYS_TO_CLOSE"].max())
-days_closed_range = st.sidebar.slider(
-    "Days to Close Range",
-    min_value=min_days_closed,
-    max_value=max_days_closed,
-    value=(min_days_closed, max_days_closed),
-    step=30,
-    format="%d"
-)
-df = df[
-    (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
-    (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
-]
 
 
 
