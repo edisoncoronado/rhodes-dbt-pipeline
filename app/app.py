@@ -288,6 +288,30 @@ df = df[
     (df["BATHROOMS"] <= bathrooms_range[1])
 ]
 
+
+
+df["CONTRACT_DATE"] = pd.to_datetime(df["CONTRACT_DATE"], errors="coerce")
+df = df[df["CONTRACT_DATE"].notna()]
+
+min_date = df["CONTRACT_DATE"].min().date()
+max_date = df["CONTRACT_DATE"].max().date()
+
+date_range = st.sidebar.date_input(
+    "Contract Date Range",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date
+)
+
+if isinstance(date_range, tuple) and len(date_range) == 2:
+    start_date, end_date = date_range
+    df = df[
+        (df["CONTRACT_DATE"].dt.date >= start_date) &
+        (df["CONTRACT_DATE"].dt.date <= end_date)
+    ]
+
+
+
 # Metrics
 st.subheader("Sales Overview")
 
