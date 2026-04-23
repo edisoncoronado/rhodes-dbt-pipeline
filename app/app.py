@@ -66,12 +66,14 @@ col1.metric(
 col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
 col3.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
-color_map = {
-    "Rio Grande Valley": "#5DA5A4",   # teal
-    "South Texas": "#E3C26F",         # gold
-    "Coastal Bend": "#E88E64"         # orange
-}
+category_values = sorted(df[selected_column].dropna().unique().tolist())
 
+palette = px.colors.qualitative.Set2
+
+color_map = {
+    value: palette[i % len(palette)]
+    for i, value in enumerate(category_values)
+}
 
 # Chart 1
 # st.subheader("Sales by Region")
@@ -85,6 +87,7 @@ fig1 = px.bar(
     x=selected_column,
     y="CONTRACT_ID",
     color=selected_column, 
+    color_discrete_map=color_map,
     title=f"Sales by {perspective}",
     labels={"CONTRACT_ID": "Total Sales"}
 )
@@ -104,6 +107,7 @@ fig2 = px.bar(
     x=selected_column,
     y="CANCELLATION_FLAG",
     color=selected_column, 
+    color_discrete_map=color_map,
     title="Cancellation Rate",
     labels={"CANCELLATION_FLAG": "Rate Canceled"}
 )
