@@ -53,9 +53,9 @@ FROM RHODES_DWH.ANALYTICS.FCT_HOMEBUILDER_SALES
 df = pd.read_sql(query, conn)
 
 # Sidebar filter
-names = ["Region","Community","City","Plan Name","Loan Type","Sales Consultant","Regional Manager"]
+names = ["Region","Community","City","Plan Name","Loan Type","Sales Consultant","Regional Manager","Buyer Source","Status"]
 
-columns = ["REGION","COMMUNITY","CITY","PLAN_NAME","LOAN_TYPE","SALES_CONSULTANT","REGIONAL_MANAGER"]
+columns = ["REGION","COMMUNITY","CITY","PLAN_NAME","LOAN_TYPE","SALES_CONSULTANT","REGIONAL_MANAGER","BUYER_SOURCE","STATUS"]
 
 perspectives = pd.DataFrame({
     'name': names,
@@ -73,39 +73,89 @@ selected_column = perspectives.loc[
 ].values[0]
  
 region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
-
 if region != "All":
     df = df[df["REGION"] == region]
 
 community = st.sidebar.selectbox("Select Community", ["All"] + sorted(df["COMMUNITY"].dropna().unique().tolist()))
-
 if community != "All":
     df = df[df["COMMUNITY"] == community]
 
 city = st.sidebar.selectbox("Select City", ["All"] + sorted(df["CITY"].dropna().unique().tolist()))
-
 if city != "All":
     df = df[df["CITY"] == city]
 
 plan_name = st.sidebar.selectbox("Select Plan Name", ["All"] + sorted(df["PLAN_NAME"].dropna().unique().tolist()))
-
 if plan_name != "All":
     df = df[df["PLAN_NAME"] == plan_name]
 
 loan_type = st.sidebar.selectbox("Select Loan Type", ["All"] + sorted(df["LOAN_TYPE"].dropna().unique().tolist()))
-
 if loan_type != "All":
     df = df[df["LOAN_TYPE"] == loan_type]
 
 sales_consultant = st.sidebar.selectbox("Select Sales Consultant", ["All"] + sorted(df["SALES_CONSULTANT"].dropna().unique().tolist()))
-
 if sales_consultant != "All":
     df = df[df["SALES_CONSULTANT"] == sales_consultant]
 
 regional_manager = st.sidebar.selectbox("Select Regional Manager", ["All"] + sorted(df["REGIONAL_MANAGER"].dropna().unique().tolist()))
-
 if region != "All":
     df = df[df["REGIONAL_MANAGER"] == regional_manager]
+
+buyer_source = st.sidebar.selectbox("Select Buyer Source", ["All"] + sorted(df["BUYER_SOURCE"].dropna().unique().tolist()))
+if buyer_source != "All":
+    df = df[df["BUYER_SOURCE"] == buyer_source]
+
+status = st.sidebar.selectbox("Select Status", ["All"] + sorted(df["STATUS"].dropna().unique().tolist()))
+if status != "All":
+    df = df[df["BUYER_SOURCE"] == status]
+
+
+min_price = int(df["CONTRACT_PRICE"].min())
+max_price = int(df["CONTRACT_PRICE"].max())
+price_range = st.sidebar.slider(
+    "Contract Price Range",
+    min_value=min_price,
+    max_value=max_price,
+    value=(min_price, max_price),
+    step=1000,
+    format="$%d"
+)
+df = df[
+    (df["CONTRACT_PRICE"] >= price_range[0]) &
+    (df["CONTRACT_PRICE"] <= price_range[1])
+]
+
+
+min_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].min())
+max_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].max())
+commission_range = st.sidebar.slider(
+    "Price Per Square Ft Range",
+    min_value=min_ppsf,
+    max_value=max_ppsf,
+    value=(min_commission, max_commission),
+    step=5,
+    format="$%d"
+)
+df = df[
+    (df["PRICE_PER_SQUARE_FOOT"] >= price_range[0]) &
+    (df["PRICE_PER_SQUARE_FOOT"] <= price_range[1])
+]
+
+
+min_commission = int(df["AGENT_COMMISSION"].min())
+max_commission = int(df["AGENT_COMMISSION"].max())
+commission_range = st.sidebar.slider(
+    "Agent Commission Range",
+    min_value=min_commission,
+    max_value=max_commission,
+    value=(min_commission, max_commission),
+    step=250,
+    format="$%d"
+)
+df = df[
+    (df["AGENT_COMMISSION"] >= price_range[0]) &
+    (df["AGENT_COMMISSION"] <= price_range[1])
+]
+
 
 # Metrics
 st.subheader("Sales Overview")
