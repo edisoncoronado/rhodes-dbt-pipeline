@@ -34,7 +34,7 @@ st.subheader("Sales Overview")
 
 col1, col2, col3 = st.columns(3)
 
-total_sold = df["CLOSED_FLAG"].sum()
+total_sold = df["SOLD_FLAG"].sum()
 total_records = len(df)
 
 col1.metric(
