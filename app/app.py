@@ -97,7 +97,7 @@ if sales_consultant != "All":
     df = df[df["SALES_CONSULTANT"] == sales_consultant]
 
 regional_manager = st.sidebar.selectbox("Select Regional Manager", ["All"] + sorted(df["REGIONAL_MANAGER"].dropna().unique().tolist()))
-if region != "All":
+if regional_manager != "All":
     df = df[df["REGIONAL_MANAGER"] == regional_manager]
 
 buyer_source = st.sidebar.selectbox("Select Buyer Source", ["All"] + sorted(df["BUYER_SOURCE"].dropna().unique().tolist()))
