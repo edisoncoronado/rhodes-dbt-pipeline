@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import snowflake.connector
 import plotly.express as px
+import os
 
 #st.title("Rhodes Homebuilder Sales Dashboard")
 col_logo, col_title = st.columns([1, 4])
