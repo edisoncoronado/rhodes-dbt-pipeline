@@ -249,20 +249,6 @@ df = df[
     (df["BEDROOMS"] <= bedrooms_range[1])
 ]
 
-min_bathrooms = float(df["BATHROOMS"].min())
-max_bathrooms = float(df["BATHROOMS"].max())
-bathrooms_range = st.sidebar.slider(
-    "Bathrooms Range",
-    min_value=min_bathrooms,
-    max_value=max_bathrooms,
-    value=(min_bathrooms, max_bathrooms),
-    step=0.5,
-    format="%.1f"
-)
-df = df[
-    (df["BATHROOMS"] >= bathrooms_range[0]) &
-    (df["BATHROOMS"] <= bathrooms_range[1])
-]
 
 
 
