@@ -74,39 +74,39 @@ selected_column = perspectives.loc[
 
 
  
-region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
+region = st.sidebar.selectbox("Filter Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
 if region != "All":
     df = df[df["REGION"] == region]
 
-community = st.sidebar.selectbox("Select Community", ["All"] + sorted(df["COMMUNITY"].dropna().unique().tolist()))
+community = st.sidebar.selectbox("Filter Community", ["All"] + sorted(df["COMMUNITY"].dropna().unique().tolist()))
 if community != "All":
     df = df[df["COMMUNITY"] == community]
 
-city = st.sidebar.selectbox("Select City", ["All"] + sorted(df["CITY"].dropna().unique().tolist()))
+city = st.sidebar.selectbox("Filter City", ["All"] + sorted(df["CITY"].dropna().unique().tolist()))
 if city != "All":
     df = df[df["CITY"] == city]
 
-plan_name = st.sidebar.selectbox("Select Plan Name", ["All"] + sorted(df["PLAN_NAME"].dropna().unique().tolist()))
+plan_name = st.sidebar.selectbox("Filter Plan Name", ["All"] + sorted(df["PLAN_NAME"].dropna().unique().tolist()))
 if plan_name != "All":
     df = df[df["PLAN_NAME"] == plan_name]
 
-loan_type = st.sidebar.selectbox("Select Loan Type", ["All"] + sorted(df["LOAN_TYPE"].dropna().unique().tolist()))
+loan_type = st.sidebar.selectbox("Filter Loan Type", ["All"] + sorted(df["LOAN_TYPE"].dropna().unique().tolist()))
 if loan_type != "All":
     df = df[df["LOAN_TYPE"] == loan_type]
 
-sales_consultant = st.sidebar.selectbox("Select Sales Consultant", ["All"] + sorted(df["SALES_CONSULTANT"].dropna().unique().tolist()))
+sales_consultant = st.sidebar.selectbox("Filter Sales Consultant", ["All"] + sorted(df["SALES_CONSULTANT"].dropna().unique().tolist()))
 if sales_consultant != "All":
     df = df[df["SALES_CONSULTANT"] == sales_consultant]
 
-regional_manager = st.sidebar.selectbox("Select Regional Manager", ["All"] + sorted(df["REGIONAL_MANAGER"].dropna().unique().tolist()))
+regional_manager = st.sidebar.selectbox("Filter Regional Manager", ["All"] + sorted(df["REGIONAL_MANAGER"].dropna().unique().tolist()))
 if regional_manager != "All":
     df = df[df["REGIONAL_MANAGER"] == regional_manager]
 
-buyer_source = st.sidebar.selectbox("Select Buyer Source", ["All"] + sorted(df["BUYER_SOURCE"].dropna().unique().tolist()))
+buyer_source = st.sidebar.selectbox("Filter Buyer Source", ["All"] + sorted(df["BUYER_SOURCE"].dropna().unique().tolist()))
 if buyer_source != "All":
     df = df[df["BUYER_SOURCE"] == buyer_source]
 
-status = st.sidebar.selectbox("Select Status", ["All"] + sorted(df["STATUS"].dropna().unique().tolist()))
+status = st.sidebar.selectbox("Filter Status", ["All"] + sorted(df["STATUS"].dropna().unique().tolist()))
 if status != "All":
     df = df[df["STATUS"] == status]
 
@@ -223,24 +223,28 @@ df = df[
 ]
 
 
-days_closed_df = df[df["DAYS_TO_CLOSE"].notna()]
-min_days_closed = int(days_closed_df["DAYS_TO_CLOSE"].min())
-max_days_closed = int(days_closed_df["DAYS_TO_CLOSE"].max())
-days_closed_range = st.sidebar.slider(
-    "Days to Close Range",
-    min_value=min_days_closed,
-    max_value=max_days_closed,
-    value=(min_days_closed, max_days_closed),
-    step=30,
-    format="%d"
-)
-df = df[
-    (df["DAYS_TO_CLOSE"].isna()) |   
-    (
-        (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
-        (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
+days_closed_df = df[df["DAYS_TO_CLOSE"].notna()].copy()
+
+if not days_closed_df.empty:
+    min_days_closed = int(days_closed_df["DAYS_TO_CLOSE"].min())
+    max_days_closed = int(days_closed_df["DAYS_TO_CLOSE"].max())
+
+    days_closed_range = st.sidebar.slider(
+        "Days to Close Range",
+        min_value=min_days_closed,
+        max_value=max_days_closed,
+        value=(min_days_closed, max_days_closed),
+        step=30,
+        format="%d"
     )
-]
+
+    df = df[
+        (df["DAYS_TO_CLOSE"].isna()) |
+        (
+            (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
+            (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
+        )
+    ]
 
 
 min_sqft = int(df["SQFT"].min())
