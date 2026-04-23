@@ -157,6 +157,21 @@ df = df[
 ]
 
 
+min_sqft = int(df["SQFT"].min())
+max_sqft = int(df["SQFT"].max())
+sqft_range = st.sidebar.slider(
+    "SQFT Range",
+    min_value=min_sqft,
+    max_value=max_sqft,
+    value=(min_sqft, max_sqft),
+    step=50,
+    format="0"
+)
+df = df[
+    (df["SQFT"] >= sqft_range[0]) &
+    (df["SQFT"] <= sqft_range[1])
+]
+
 # Metrics
 st.subheader("Sales Overview")
 
