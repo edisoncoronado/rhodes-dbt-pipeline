@@ -41,7 +41,7 @@ st.markdown(
 
 
 #with col_logo:
-    st.image(logo_path, width=120)
+#    st.image(logo_path, width=120)
 
 #with col_title:
 #    st.title("Rhodes Homebuilder Sales Dashboard")
