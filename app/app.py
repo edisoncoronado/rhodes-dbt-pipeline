@@ -335,7 +335,7 @@ incentive_amount = df["INCENTIVE_AMOUNT"].sum()
 
 
 col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
-col3.metric("Total Sales", f"${df['CONTRACT_PRICE'].sum():,.0f}", f"${total_base:,0f} + ${upgrade_amount:0f} - ${incentive_amount:0f} of total")
+col3.metric("Total Sales", f"${df['CONTRACT_PRICE'].sum():,.0f}", f"${total_base:,.0f} + ${upgrade_amount:.0f} - ${incentive_amount:.0f} of total")
 col4.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
 category_values = sorted(df[selected_column].dropna().unique().tolist())
