@@ -378,7 +378,7 @@ fig1 = px.bar(
     title=f"Contracts by {perspective}",
     labels={
         selected_column: perspective,       
-        "CONTRACT_ID": "Total Sales of Contracts"
+        "CONTRACT_PRICE": "Total Sales of Contracts"
     }
 )
 
@@ -387,11 +387,11 @@ st.plotly_chart(fig1)
 
 # Chart 2
 
-sales = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
-sales = sales.sort_values(by="CONTRACT_ID", ascending=False)
+counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
+counts = sales.sort_values(by="CONTRACT_ID", ascending=False)
 
 fig1 = px.bar(
-    sales,
+    counts,
     x=selected_column,
     y="CONTRACT_ID",
     color=selected_column, 
