@@ -256,7 +256,7 @@ bathrooms_range = st.sidebar.slider(
     min_value=min_bathrooms,
     max_value=max_bathrooms,
     value=(min_bathrooms, max_bathrooms),
-    step=.5,
+    step=0.5,
     format="%.1f"
 )
 df = df[
