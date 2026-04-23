@@ -203,6 +203,25 @@ df = df[
 ]
 
 
+commission_df = df[df["AGENT_COMMISSION"].notna()]
+min_commission = int(commission_df["AGENT_COMMISSION"].min())
+max_commission = int(commission_df["AGENT_COMMISSION"].max())
+commission_range = st.sidebar.slider(
+    "Agent Commission Range",
+    min_value=min_commission,
+    max_value=max_commission,
+    value=(min_commission, max_commission),
+    step=100,
+    format="$%d"
+)
+df = df[
+    (df["AGENT_COMMISSION"].isna()) |   # 👈 keep nulls
+    (
+        (df["AGENT_COMMISSION"] >= commission_range[0]) &
+        (df["AGENT_COMMISSION"] <= commission_range[1])
+    )
+]
+
 
 
 
