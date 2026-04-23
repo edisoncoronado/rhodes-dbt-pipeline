@@ -4,17 +4,47 @@ import snowflake.connector
 import plotly.express as px
 import os
 
-#st.title("Rhodes Homebuilder Sales Dashboard")
-col_logo, col_title = st.columns([1, 4])
+import base64
 
 logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
-st.image(logo_path, width=120)
 
-with col_logo:
+# Load SVG
+with open(logo_path, "r") as f:
+    svg = f.read()
+
+# Convert to base64 (correct way)
+svg_base64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
+
+st.markdown(
+    f"""
+    <div style="
+        background-color: black;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+    ">
+        <img src="data:image/svg+xml;base64,{svg_base64}" width="80" style="margin-right: 20px;" />
+        <h1 style="color: white; margin: 0;">
+            Rhodes Homebuilder Sales Dashboard
+        </h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+#st.title("Rhodes Homebuilder Sales Dashboard")
+#col_logo, col_title = st.columns([1, 4])
+
+
+
+#with col_logo:
     st.image(logo_path, width=120)
 
-with col_title:
-    st.title("Rhodes Homebuilder Sales Dashboard")
+#with col_title:
+#    st.title("Rhodes Homebuilder Sales Dashboard")
 
 
 # Connect to Snowflake using Streamlit secrets
