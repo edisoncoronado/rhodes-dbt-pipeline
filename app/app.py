@@ -49,9 +49,12 @@ fig = px.bar(
     region_sales,
     x="REGION",
     y="CONTRACT_ID",
+    color="REGION", 
     title="Sales by Region",
-    labels={"CONTRACT_ID": "Total Sales"}
+    labels={"CONTRACT_ID": "Total Sales"},
+    color_discrete_sequence=x.colors.qualitative.Pastel
 )
+
 
 st.plotly_chart(fig)
 
