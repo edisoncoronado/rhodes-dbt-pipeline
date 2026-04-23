@@ -304,13 +304,10 @@ date_range = st.sidebar.date_input(
    label_visibility="collapsed"
 )
 
-if isinstance(date_range, tuple) and len(date_range) == 2:
-    start_date, end_date = date_range
-
-    st.sidebar.caption(
-        f"{start_date.strftime('%m/%d/%Y')} – {end_date.strftime('%m/%d/%Y')}"
-    )
-
+st.sidebar.markdown("**Contract Date Range**")
+st.sidebar.caption(
+    f"{date_range[0].strftime('%m/%d/%Y')} – {date_range[1].strftime('%m/%d/%Y')}"
+)
 
 
 
