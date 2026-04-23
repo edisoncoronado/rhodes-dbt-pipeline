@@ -34,7 +34,15 @@ st.subheader("Sales Overview")
 
 col1, col2, col3 = st.columns(3)
 
-col1.metric("Total Sales", len(df))
+total_sold = df["CLOSED_FLAG"].sum()
+total_records = len(df)
+
+col1.metric(
+    "Total Sold",
+    total_sold,
+    f"{(total_sold / total_records):.1%} of total"
+)
+
 col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
 col3.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
