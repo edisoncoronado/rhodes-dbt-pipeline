@@ -83,7 +83,7 @@ fig2 = px.bar(
 )
 
 fig2.update_layout(
-    yaxis_tickformat="%"  
+    yaxis_tickformat=".2%"  
 )
 
 st.plotly_chart(fig2)
