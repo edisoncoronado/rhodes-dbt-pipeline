@@ -126,6 +126,52 @@ df = df[
     (df["CONTRACT_PRICE"] <= price_range[1])
 ]
 
+min_base_price = int(df["BASE_PRICE"].min())
+max_base_price = int(df["BASE_PRICE"].max())
+base_price_range = st.sidebar.slider(
+    "Base Price Range",
+    min_value=min_base_price,
+    max_value=max_base_price,
+    value=(min_base_price, max_base_price),
+    step=1000,
+    format="$%d"
+)
+df = df[
+    (df["BASE_PRICE"] >= base_price_range[0]) &
+    (df["BASE_PRICE"] <= base_price_range[1])
+]
+
+
+min_upgrade_amount = int(df["UPGRADE_AMOUNT"].min())
+max_upgrade_amount = int(df["UPGRADE_AMOUNT"].max())
+upgrade_amount_range = st.sidebar.slider(
+    "Upgrade Amount Range",
+    min_value=min_upgrade_amount,
+    max_value=max_upgrade_amount,
+    value=(min_upgrade_amount, max_upgrade_amount),
+    step=500,
+    format="$%d"
+)
+df = df[
+    (df["UPGRADE_AMOUNT"] >= upgrade_amount_range[0]) &
+    (df["UPGRADE_AMOUNT"] <= upgrade_amount_range[1])
+]
+
+min_incentive_amount = int(df["INCENTIVE_AMOUNT"].min())
+max_incentive_amount = int(df["INCENTIVE_AMOUNT"].max())
+incentive_amount_range = st.sidebar.slider(
+    "Upgrade Amount Range",
+    min_value=min_incentive_amount,
+    max_value=max_incentive_amount,
+    value=(min_incentive_amount, max_incentive_amount),
+    step=500,
+    format="$%d"
+)
+df = df[
+    (df["INCENTIVE_AMOUNT"] >= incentive_amount_range[0]) &
+    (df["INCENTIVE_AMOUNT"] <= incentive_amount_range[1])
+]
+
 
 min_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].min())
 max_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].max())
@@ -142,7 +188,6 @@ df = df[
     (df["PRICE_PER_SQUARE_FOOT"] <= ppsf_range[1])
 ]
 
-
 min_commission = int(df["AGENT_COMMISSION"].min())
 max_commission = int(df["AGENT_COMMISSION"].max())
 commission_range = st.sidebar.slider(
@@ -156,6 +201,21 @@ commission_range = st.sidebar.slider(
 df = df[
     (df["AGENT_COMMISSION"] >= commission_range[0]) &
     (df["AGENT_COMMISSION"] <= commission_range[1])
+]
+
+min_days_closed = int(df["DAYS_TO_CLOSE"].min())
+max_days_closed = int(df["DAYS_TO_CLOSE"].max())
+days_closed_range = st.sidebar.slider(
+    "Days to Close Range",
+    min_value=min_days_closed,
+    max_value=max_days_closed,
+    value=(min_days_close, max_days_closed),
+    step=30,
+    format="%d"
+)
+df = df[
+    (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
+    (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
 ]
 
 
@@ -173,6 +233,40 @@ df = df[
     (df["SQFT"] >= sqft_range[0]) &
     (df["SQFT"] <= sqft_range[1])
 ]
+
+min_bedrooms = int(df["BEDROOMS"].min())
+max_bedrooms = int(df["BEDROOMS"].max())
+bedrooms_range = st.sidebar.slider(
+    "Bedrooms Range",
+    min_value=min_bedrooms,
+    max_value=max_bedrooms,
+    value=(min_bedrooms, max_bedrooms),
+    step=1,
+    format="%d"
+)
+df = df[
+    (df["BEDROOMS"] >= bedrooms_range[0]) &
+    (df["BEDROOMS"] <= bedrooms_range[1])
+]
+
+min_bathrooms = int(df["BATHROOMS"].min())
+max_bathrooms = int(df["BATHROOMS"].max())
+bathrooms_range = st.sidebar.slider(
+    "Bathrooms Range",
+    min_value=min_bathrooms,
+    max_value=max_bathrooms,
+    value=(min_bathrooms, max_bathrooms),
+    step=.5,
+    format="%d"
+)
+df = df[
+    (df["BATHROOMS"] >= bathrooms_range[0]) &
+    (df["BATHROOMS"] <= bathrooms_range[1])
+]
+
+
+
+
 
 # Metrics
 st.subheader("Sales Overview")
