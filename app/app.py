@@ -209,7 +209,7 @@ days_closed_range = st.sidebar.slider(
     "Days to Close Range",
     min_value=min_days_closed,
     max_value=max_days_closed,
-    value=(min_days_close, max_days_closed),
+    value=(min_days_closed, max_days_closed),
     step=30,
     format="%d"
 )
