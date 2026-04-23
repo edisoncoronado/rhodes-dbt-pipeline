@@ -6,8 +6,11 @@ import plotly.express as px
 #st.title("Rhodes Homebuilder Sales Dashboard")
 col_logo, col_title = st.columns([1, 4])
 
+logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
+st.image(logo_path, width=120)
+
 with col_logo:
-    st.image("logo.svg", width=120)
+    st.image(logo_path, width=120)
 
 with col_title:
     st.title("Rhodes Homebuilder Sales Dashboard")
