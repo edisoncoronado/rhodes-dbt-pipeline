@@ -223,20 +223,7 @@ df = df[
 ]
 
 
-min_days_closed = int(df["DAYS_TO_CLOSE"].min())
-max_days_closed = int(df["DAYS_TO_CLOSE"].max())
-days_closed_range = st.sidebar.slider(
-    "Days to Close Range",
-    min_value=min_days_closed,
-    max_value=max_days_closed,
-    value=(min_days_closed, max_days_closed),
-    step=30,
-    format="%d"
-)
-df = df[
-    (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
-    (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
-]
+
 
 
 # Metrics
