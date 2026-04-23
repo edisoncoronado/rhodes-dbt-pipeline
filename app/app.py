@@ -318,7 +318,7 @@ st.sidebar.caption(
 # Metrics
 st.subheader("Sales Overview")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 total_sold = df["SOLD_FLAG"].sum()
 total_records = len(df)
@@ -329,8 +329,14 @@ col1.metric(
     f"{(total_sold / total_records):.1%} of total"
 )
 
+total_base = df["BASE_PRICE"].sum()
+upgrade_amount = df["UPGRADE_AMOUNT"].sum()
+incentive_amount = df["INCENTIVE_AMOUNT"].sum()
+
+
 col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
-col3.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
+col3.metric("Total Sales", f"${df['CONTRACT_PRICE'].sum():,.0f}", f"{total_base:.1%} + {upgrade_amount:.1%} - {incentive_amount:.1%} of total")
+col4.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
 category_values = sorted(df[selected_column].dropna().unique().tolist())
 
@@ -341,7 +347,31 @@ color_map = {
     for i, value in enumerate(category_values)
 }
 
+
+
+
 # Chart 1
+
+sales = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
+sales = sales.sort_values(by="CONTRACT_ID", ascending=False)
+
+fig1 = px.bar(
+    sales,
+    x=selected_column,
+    y="CONTRACT_ID",
+    color=selected_column, 
+    color_discrete_map=color_map,
+    title=f"Contracts by {perspective}",
+    labels={
+        selected_column: perspective,       
+        "CONTRACT_ID": "Total Contracts"
+    }
+)
+
+
+st.plotly_chart(fig1)
+
+# Chart 2
 
 sales = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
 sales = sales.sort_values(by="CONTRACT_ID", ascending=False)
@@ -361,6 +391,8 @@ fig1 = px.bar(
 
 
 st.plotly_chart(fig1)
+
+
 
 # Chart 2
 
