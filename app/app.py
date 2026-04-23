@@ -300,15 +300,16 @@ date_range = st.sidebar.date_input(
     "Contract Date Range",
     value=(min_date, max_date),
     min_value=min_date,
-    max_value=max_date
+    max_value=max_date,
+   label_visibility="collapsed"
 )
 
 if isinstance(date_range, tuple) and len(date_range) == 2:
     start_date, end_date = date_range
-    df = df[
-        (df["CONTRACT_DATE"].dt.date >= start_date) &
-        (df["CONTRACT_DATE"].dt.date <= end_date)
-    ]
+
+    st.sidebar.caption(
+        f"{start_date.strftime('%m/%d/%Y')} – {end_date.strftime('%m/%d/%Y')}"
+    )
 
 
 
