@@ -3,8 +3,18 @@ import pandas as pd
 import snowflake.connector
 import plotly.express as px
 
-st.title("Rhodes Homebuilder Sales Dashboard")
-
+#st.title("Rhodes Homebuilder Sales Dashboard")
+st.markdown(
+    """
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/svg+xml;base64,{}" width="80">
+        <h1 style="margin-left: 20px;">Rhodes Homebuilder Sales Dashboard</h1>
+    </div>
+    """.format(
+        open("logo.svg").read().encode("utf-8").hex()
+    ),
+    unsafe_allow_html=True
+)
 # Connect to Snowflake using Streamlit secrets
 conn = snowflake.connector.connect(
     user=st.secrets["SNOWFLAKE_USER"],
