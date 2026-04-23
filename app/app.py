@@ -131,13 +131,13 @@ ppsf_range = st.sidebar.slider(
     "Price Per Square Ft Range",
     min_value=min_ppsf,
     max_value=max_ppsf,
-    value=(min_commission, max_commission),
+    value=(min_ppsf, max_ppsf),
     step=5,
     format="$%d"
 )
 df = df[
-    (df["PRICE_PER_SQUARE_FOOT"] >= price_range[0]) &
-    (df["PRICE_PER_SQUARE_FOOT"] <= price_range[1])
+    (df["PRICE_PER_SQUARE_FOOT"] >= ppsf_range[0]) &
+    (df["PRICE_PER_SQUARE_FOOT"] <= ppsf_range[1])
 ]
 
 
