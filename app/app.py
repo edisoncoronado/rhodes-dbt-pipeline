@@ -341,8 +341,15 @@ col3.metric(
     f"${total_sales:,.0f}"
 )
 
-col3.caption(
-    f"${total_base:,.0f} + ${upgrade_amount:,.0f} - ${incentive_amount:,.0f}"
+col3.markdown(
+    f"""
+    <div style="font-size:12px; color:gray;">
+        <span style="color:#008000;">Base:</span> ${total_base:,.0f} &nbsp;|&nbsp;
+        <span style="color:#020079;">Upgrades:</span> ${upgrade_amount:,.0f} &nbsp;|&nbsp;
+        <span style="color:#FF00FF;">Incentives:</span> -${incentive_amount:,.0f}
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
 col4, col5, col6 = st.columns(3)
@@ -388,7 +395,7 @@ st.plotly_chart(fig1)
 # Chart 2
 
 counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
-counts = sales.sort_values(by="CONTRACT_ID", ascending=False)
+counts = counts.sort_values(by="CONTRACT_ID", ascending=False)
 
 fig1 = px.bar(
     counts,
