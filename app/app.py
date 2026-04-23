@@ -336,15 +336,19 @@ col2.metric(
 )
 
 
-col3.metric("Total Under Contract", f"${df["UNDER_CONTRACT_FLAG"].sum():,.2f}")
+col3.metric("Total Under Contract", f"${df["UNDER_CONTRACT_FLAG"].sum():.1%}")
 
 
 
 col4, col5, col6 = st.columns(3)
 
-col4.metric("Avg Contract", f"${df['CONTRACT_PRICE'].mean():,.0f}")
-col5.metric("Avg Days to Close", f"${df['DAYS_TO_CLOSE'].mean():,.2f}")
-col6.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
+contract_price = df['CONTRACT_PRICE'].mean()
+days_to_close = df['DAYS_TO_CLOSE'].mean()
+thirty_days_avg_sales = (contract_price/days_to_close) *30
+
+col4.metric("Avg Contract", f"${contract_price:,.0f}")
+col5.metric("Avg Days to Close", f"${days_to_close:,.1%}")
+col6.metric("30 day Avg Sales", f"${thirty_days_avg_sales:,.2f}")
 
 
 category_values = sorted(df[selected_column].dropna().unique().tolist())
