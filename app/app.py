@@ -329,6 +329,7 @@ col1.metric(
     f"{(total_sold / total_records):.1%} of total"
 )
 
+total_sales = df["CONTRACT_PRICE"].sum()
 total_base = df["BASE_PRICE"].sum()
 upgrade_amount = df["UPGRADE_AMOUNT"].sum()
 incentive_amount = df["INCENTIVE_AMOUNT"].sum()
