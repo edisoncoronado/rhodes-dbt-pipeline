@@ -372,7 +372,7 @@ sales = sales.sort_values(by="CONTRACT_PRICE", ascending=False)
 fig1 = px.bar(
     sales,
     x=selected_column,
-    y="CONTRACT_ID",
+    y="CONTRACT_PRICE",
     color=selected_column, 
     color_discrete_map=color_map,
     title=f"Contracts by {perspective}",
