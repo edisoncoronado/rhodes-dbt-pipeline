@@ -141,6 +141,35 @@ df = df[
     (df["BASE_PRICE"] <= base_price_range[1])
 ]
 
+min_upgrade_amount = int(df["UPGRADE_AMOUNT"].min())
+max_upgrade_amount = int(df["UPGRADE_AMOUNT"].max())
+upgrade_amount_range = st.sidebar.slider(
+    "Upgrade Amount Range",
+    min_value=min_upgrade_amount,
+    max_value=max_upgrade_amount,
+    value=(min_upgrade_amount, max_upgrade_amount),
+    step=500,
+    format="$%d"
+)
+df = df[
+    (df["UPGRADE_AMOUNT"] >= upgrade_amount_range[0]) &
+    (df["UPGRADE_AMOUNT"] <= upgrade_amount_range[1])
+]
+
+min_incentive_amount = int(df["INCENTIVE_AMOUNT"].min())
+max_incentive_amount = int(df["INCENTIVE_AMOUNT"].max())
+incentive_amount_range = st.sidebar.slider(
+    "Upgrade Amount Range",
+    min_value=min_incentive_amount,
+    max_value=max_incentive_amount,
+    value=(min_incentive_amount, max_incentive_amount),
+    step=500,
+    format="$%d"
+)
+df = df[
+    (df["INCENTIVE_AMOUNT"] >= incentive_amount_range[0]) &
+    (df["INCENTIVE_AMOUNT"] <= incentive_amount_range[1])
+]
 
 
 
