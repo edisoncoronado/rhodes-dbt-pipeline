@@ -74,9 +74,38 @@ selected_column = perspectives.loc[
  
 region = st.sidebar.selectbox("Select Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
 
-
 if region != "All":
     df = df[df["REGION"] == region]
+
+community = st.sidebar.selectbox("Select Community", ["All"] + sorted(df["COMMUNITY"].dropna().unique().tolist()))
+
+if region != "All":
+    df = df[df["COMMUNITY"] == community]
+
+city = st.sidebar.selectbox("Select City", ["All"] + sorted(df["CITY"].dropna().unique().tolist()))
+
+if region != "All":
+    df = df[df["CITY"] == city]
+
+plan_name = st.sidebar.selectbox("Select Plan Name", ["All"] + sorted(df["PLAN_NAME"].dropna().unique().tolist()))
+
+if region != "All":
+    df = df[df["PLAN_NAME"] == plan_name]
+
+loan_type = st.sidebar.selectbox("Select Loan Type", ["All"] + sorted(df["LOAN_TYPE"].dropna().unique().tolist()))
+
+if loan_type != "All":
+    df = df[df["LOAN_TYPE"] == loan_type]
+
+sales_consultant = st.sidebar.selectbox("Select Sales Consultant", ["All"] + sorted(df["SALES_CONSULTANT"].dropna().unique().tolist()))
+
+if region != "All":
+    df = df[df["SALES_CONSULTANT"] == sales_consultant]
+
+regional_manager = st.sidebar.selectbox("Select Regional Manager", ["All"] + sorted(df["REGIONAL_MANAGER"].dropna().unique().tolist()))
+
+if region != "All":
+    df = df[df["REGIONAL_MANAGER"] == regional_manager]
 
 # Metrics
 st.subheader("Sales Overview")
