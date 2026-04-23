@@ -344,9 +344,9 @@ col3.metric(
 col3.markdown(
     f"""
     <div style="font-size:12px; color:gray;">
-        <span style="color:#008000;">Base:</span> ${total_base:,.0f} &nbsp;|&nbsp;
-        <span style="color:#020079;">Upgrades:</span> ${upgrade_amount:,.0f} &nbsp;|&nbsp;
-        <span style="color:#FF00FF;">Incentives:</span> -${incentive_amount:,.0f}
+        <span style="color:#008000;"> ${total_base:,.0f}</span> &nbsp;+&nbsp;
+        <span style="color:#020079;">${upgrade_amount:,.0f}</span>&nbsp;&nbsp;
+        <span style="color:#FF00FF;">-${incentive_amount:,.0f}</span>
     </div>
     """,
     unsafe_allow_html=True
