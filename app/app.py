@@ -159,7 +159,7 @@ df = df[
 min_incentive_amount = int(df["INCENTIVE_AMOUNT"].min())
 max_incentive_amount = int(df["INCENTIVE_AMOUNT"].max())
 incentive_amount_range = st.sidebar.slider(
-    "Upgrade Amount Range",
+    "Incentive Amount Range",
     min_value=min_incentive_amount,
     max_value=max_incentive_amount,
     value=(min_incentive_amount, max_incentive_amount),
@@ -185,21 +185,6 @@ ppsf_range = st.sidebar.slider(
 df = df[
     (df["PRICE_PER_SQUARE_FOOT"] >= ppsf_range[0]) &
     (df["PRICE_PER_SQUARE_FOOT"] <= ppsf_range[1])
-]
-
-min_commission = int(df["AGENT_COMMISSION"].min())
-max_commission = int(df["AGENT_COMMISSION"].max())
-commission_range = st.sidebar.slider(
-    "Agent Commission Range",
-    min_value=min_commission,
-    max_value=max_commission,
-    value=(min_commission, max_commission),
-    step=250,
-    format="$%d"
-)
-df = df[
-    (df["AGENT_COMMISSION"] >= commission_range[0]) &
-    (df["AGENT_COMMISSION"] <= commission_range[1])
 ]
 
 
@@ -353,6 +338,7 @@ col3.markdown(
 )
 
 col4, col5, col6 = st.columns(3)
+
 
 col4.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 col5.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
