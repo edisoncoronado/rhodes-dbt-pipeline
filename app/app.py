@@ -82,6 +82,10 @@ fig2 = px.bar(
     labels={"CANCELLATION_FLAG": "Rate Canceled"}
 )
 
+fig2.update_layout(
+    yaxis_tickformat=".0%"  
+)
+
 st.plotly_chart(fig2)
 
 # Chart 3
