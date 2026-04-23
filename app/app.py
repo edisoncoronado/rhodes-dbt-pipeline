@@ -347,7 +347,7 @@ days_to_close = df['DAYS_TO_CLOSE'].mean()
 thirty_days_avg_sales = (contract_price/days_to_close) *30
 
 col4.metric("Avg Contract", f"${contract_price:,.0f}")
-col5.metric("Avg Days to Close", days_to_close)
+col5.metric("Avg Days to Close", f"{days_to_close:,.0f}")
 col6.metric("30 day Avg Sales", f"${thirty_days_avg_sales:,.2f}")
 
 
