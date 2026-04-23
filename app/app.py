@@ -127,7 +127,7 @@ df = df[
 
 min_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].min())
 max_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].max())
-commission_range = st.sidebar.slider(
+ppsf_range = st.sidebar.slider(
     "Price Per Square Ft Range",
     min_value=min_ppsf,
     max_value=max_ppsf,
@@ -152,8 +152,8 @@ commission_range = st.sidebar.slider(
     format="$%d"
 )
 df = df[
-    (df["AGENT_COMMISSION"] >= price_range[0]) &
-    (df["AGENT_COMMISSION"] <= price_range[1])
+    (df["AGENT_COMMISSION"] >= commission_range[0]) &
+    (df["AGENT_COMMISSION"] <= commission_range[1])
 ]
 
 
