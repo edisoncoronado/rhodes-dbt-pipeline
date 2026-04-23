@@ -307,26 +307,18 @@ col1, col2, col3 = st.columns(3)
 
 total_sold = df["SOLD_FLAG"].sum()
 total_records = len(df)
-
-col1.metric(
-    "Total Sold",
-    total_sold,
-    f"{(total_sold / total_records):.1%} of total"
-)
-
 total_sales = df["CONTRACT_PRICE"].sum()
 total_base = df["BASE_PRICE"].sum()
 upgrade_amount = df["UPGRADE_AMOUNT"].sum()
 incentive_amount = df["INCENTIVE_AMOUNT"].sum()
 
 
-col2.metric("Avg Contract", f"${df['CONTRACT_PRICE'].mean():,.0f}")
-col3.metric(
+col1.metric(
     "Total Sales",
     f"${total_sales:,.0f}"
 )
 
-col3.markdown(
+col1.markdown(
     f"""
     <div style="font-size:12px; color:gray;">
         <span style="color:#008000;"> ${total_base:,.0f}</span> &nbsp;+&nbsp;
@@ -337,11 +329,21 @@ col3.markdown(
     unsafe_allow_html=True
 )
 
+col2.metric(
+    "Total Sold",
+    total_sold,
+    f"{(total_sold / total_records):.1%} of total"
+)
+
+
+col3.metric("Total Under Contract", f"${df["UNDER_CONTRACT_FLAG"].sum():,.2f}")
+
+
+
 col4, col5, col6 = st.columns(3)
 
-
-col4.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
-col5.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
+col4.metric("Avg Contract", f"${df['CONTRACT_PRICE'].mean():,.0f}")
+col5.metric("Avg Days to Close", f"${df['DAYS_TO_CLOSE'].mean():,.2f}")
 col6.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
 
