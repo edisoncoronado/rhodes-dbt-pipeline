@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import snowflake.connector
+import plotly.express as px
 
 st.title("Rhodes Homebuilder Sales Dashboard")
 
@@ -38,8 +39,21 @@ col2.metric("Avg Price", f"${df['CONTRACT_PRICE'].mean():,.0f}")
 col3.metric("Avg Price per Sqft", f"${df['PRICE_PER_SQUARE_FOOT'].mean():,.2f}")
 
 # Chart 1
-st.subheader("Sales by Region")
-st.bar_chart(df.groupby("REGION")["CONTRACT_ID"].count())
+# st.subheader("Sales by Region")
+# st.bar_chart(df.groupby("REGION")["CONTRACT_ID"].count())
+
+region_sales = df.groupby("region")["contract_id"].count().reset_index()
+region_sales = region_sales.sort_values(by="contract_id", ascending=False)
+
+fig = px.bar(
+    region_sales,
+    x="region",
+    y="contract_id",
+    title="Sales by Region",
+    labels={"contract_id": "Total Sales"}
+)
+
+st.plotly_chart(fig)
 
 # Chart 2
 st.subheader("Cancellation Rate")
