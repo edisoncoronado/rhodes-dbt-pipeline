@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: raw
+    database: RHODES_DWH
+    schema: RAW
+    tables:
+      - name: HOMEBUILDER_SALES
+      - name: REGIONAL_MANAGER_LOOKUP
+
+models:
+  - name: stg_homebuilder_sales
+    description: Cleaned staging model for raw homebuilder sales data.
+    columns:
+      - name: region
+        description: Region from the sales transaction record.
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_regional_manager_lookup')
+                field: region
+
+  - name: stg_regional_manager_lookup
+    description: Dominant lookup table for valid regions, managers, and sales targets.
+    columns:
+      - name: region
+        description: Canonical region key.
+        tests:
+          - not_null
