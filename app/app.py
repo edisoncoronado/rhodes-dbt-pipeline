@@ -52,7 +52,7 @@ color_map = {
 region_sales = df.groupby("REGION")["CONTRACT_ID"].count().reset_index()
 region_sales = region_sales.sort_values(by="CONTRACT_ID", ascending=False)
 
-fig = px.bar(
+fig1 = px.bar(
     region_sales,
     x="REGION",
     y="CONTRACT_ID",
@@ -63,7 +63,7 @@ fig = px.bar(
 )
 
 
-st.plotly_chart(fig)
+st.plotly_chart(fig1)
 
 # Chart 2
 # st.subheader("Cancellation Rate")
@@ -72,7 +72,7 @@ st.plotly_chart(fig)
 cancellation_rate = df.groupby("REGION")["CANCELLATION_FLAG"].mean().reset_index()
 cancellation_rate = cancellation_rate.sort_values(by="CANCELLATION_FLAG", ascending=False)
 
-fig = px.bar(
+fig2 = px.bar(
     cancellation_rate,
     x="REGION",
     y="CANCELLATION_FLAG",
@@ -81,6 +81,9 @@ fig = px.bar(
     title="Cancellation Rate",
     labels={"CANCELLATION_FLAG": "Rate Canceled"}
 )
+
+st.plotly_chart(fig2)
+
 # Chart 3
 st.subheader("Avg Price per Sqft")
 st.bar_chart(df.groupby("REGION")["PRICE_PER_SQUARE_FOOT"].mean())
