@@ -257,7 +257,7 @@ bathrooms_range = st.sidebar.slider(
     max_value=max_bathrooms,
     value=(min_bathrooms, max_bathrooms),
     step=.5,
-    format="%d"
+    format="%.1f"
 )
 df = df[
     (df["BATHROOMS"] >= bathrooms_range[0]) &
