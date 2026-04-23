@@ -222,6 +222,7 @@ df = df[
     )
 ]
 
+
 min_days_closed = int(df["DAYS_TO_CLOSE"].min())
 max_days_closed = int(df["DAYS_TO_CLOSE"].max())
 days_closed_range = st.sidebar.slider(
@@ -236,54 +237,6 @@ df = df[
     (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
     (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
 ]
-
-
-min_sqft = int(df["SQFT"].min())
-max_sqft = int(df["SQFT"].max())
-sqft_range = st.sidebar.slider(
-    "SQFT Range",
-    min_value=min_sqft,
-    max_value=max_sqft,
-    value=(min_sqft, max_sqft),
-    step=50,
-    format="%d"
-)
-df = df[
-    (df["SQFT"] >= sqft_range[0]) &
-    (df["SQFT"] <= sqft_range[1])
-]
-
-min_bedrooms = int(df["BEDROOMS"].min())
-max_bedrooms = int(df["BEDROOMS"].max())
-bedrooms_range = st.sidebar.slider(
-    "Bedrooms Range",
-    min_value=min_bedrooms,
-    max_value=max_bedrooms,
-    value=(min_bedrooms, max_bedrooms),
-    step=1,
-    format="%d"
-)
-df = df[
-    (df["BEDROOMS"] >= bedrooms_range[0]) &
-    (df["BEDROOMS"] <= bedrooms_range[1])
-]
-
-min_bathrooms = float(df["BATHROOMS"].min())
-max_bathrooms = float(df["BATHROOMS"].max())
-bathrooms_range = st.sidebar.slider(
-    "Bathrooms Range",
-    min_value=min_bathrooms,
-    max_value=max_bathrooms,
-    value=(min_bathrooms, max_bathrooms),
-    step=0.5,
-    format="%.1f"
-)
-df = df[
-    (df["BATHROOMS"] >= bathrooms_range[0]) &
-    (df["BATHROOMS"] <= bathrooms_range[1])
-]
-
-
 
 
 # Metrics
