@@ -491,52 +491,67 @@ st.plotly_chart(fig4, use_container_width=True)
 st.subheader("Snowflake Cortex AI Summary")
 
 st.caption(
-    "Uses Snowflake Cortex COMPLETE to generate business-friendly insights from the current dashboard filters."
+    "Uses Snowflake Cortex COMPLETE to generate business-friendly insights from the current dashboard perspective and filters."
 )
 
-if len(df) == 0:
+if df.empty:
     st.warning("No data available for the current filters.")
 else:
     perspective_summary = (
-        df.groupby(selected_column)
+        df.groupby(selected_column, dropna=False)
         .agg(
             total_sales=("CONTRACT_PRICE", "sum"),
             avg_contract=("CONTRACT_PRICE", "mean"),
-            base_price=("BASE_PRICE", "sum"),
+            total_base_price=("BASE_PRICE", "sum"),
             avg_base_price=("BASE_PRICE", "mean"),
             cancellation_rate=("CANCELLATION_FLAG", "mean"),
             avg_days_to_close=("DAYS_TO_CLOSE", "mean"),
-            sold_units=("SOLD_FLAG", "sum")
+            sold_units=("SOLD_FLAG", "sum"),
+            total_records=("CONTRACT_ID", "count")
         )
         .reset_index()
+        .sort_values(by="total_sales", ascending=False)
+        .head(10)
     )
+
+    perspective_summary = perspective_summary.round({
+        "total_sales": 0,
+        "avg_contract": 0,
+        "total_base_price": 0,
+        "avg_base_price": 0,
+        "cancellation_rate": 4,
+        "avg_days_to_close": 1,
+        "sold_units": 0,
+        "total_records": 0
+    })
 
     perspective_text = perspective_summary.to_string(index=False)
 
     user_question = st.text_input(
         "Ask a question about the current dashboard data",
-        placeholder="Example: Which region should leadership focus on?"
+        placeholder=f"Example: Which {perspective.lower()} should leadership focus on?"
     )
 
     if st.button("Generate Cortex Insight"):
         prompt = f"""
 You are a sales analytics assistant for a homebuilder leadership team.
 
-Use the {selected_column} performance summary below to answer in business terms.
+Use the {perspective} performance summary below to answer in business terms.
 
-{selected_column} performance data:
+{perspective} performance data:
 {perspective_text}
 
 Current selected dashboard perspective: {perspective}
 
 User question:
-{user_question if user_question else "Provide an executive summary of performance."}
+{user_question if user_question.strip() else "Provide an executive summary of performance."}
 
 Provide:
 1. Key performance insight
 2. Risk or concern
 3. Recommendation for leadership
-Keep the response concise and business-friendly.
+
+Keep the response concise, business-friendly, and grounded only in the provided data.
 """
 
         safe_prompt = prompt.replace("'", "''")
