@@ -486,3 +486,75 @@ fig4.update_traces(
 )
 
 st.plotly_chart(fig4, use_container_width=True)
+
+
+st.subheader("Snowflake Cortex AI Insights")
+
+st.caption(
+    "This section uses Snowflake Cortex COMPLETE to generate business-friendly insights based on the current dashboard filters."
+)
+
+# Build summarized context from the filtered dataframe
+summary_context = f"""
+You are analyzing homebuilder sales performance for a leadership dashboard.
+
+Current filtered dashboard metrics:
+- Total Records: {len(df)}
+- Total Sold: {df["SOLD_FLAG"].sum():,.0f}
+- Total Contract Sales: ${df["CONTRACT_PRICE"].sum():,.0f}
+- Average Contract Price: ${df["CONTRACT_PRICE"].mean():,.0f}
+- Average Price per Square Foot: ${df["PRICE_PER_SQUARE_FOOT"].mean():,.2f}
+- Cancellation Rate: {df["CANCELLATION_FLAG"].mean():.2%}
+- Average Days to Close: {df["DAYS_TO_CLOSE"].mean():.1f}
+- Selected Perspective: {perspective}
+
+The answer should be useful for a business user, not technical.
+"""
+
+user_question = st.text_input(
+    "Ask a question about the current dashboard data",
+    placeholder="Example: What should leadership focus on based on these results?"
+)
+
+if st.button("Generate Cortex Insight"):
+    if len(df) == 0:
+        st.warning("No data is available for the current filters.")
+    else:
+        if user_question.strip():
+            prompt = f"""
+{summary_context}
+
+User question:
+{user_question}
+
+Answer the question using only the provided dashboard metrics.
+Provide:
+1. A direct answer
+2. Key supporting insight
+3. One recommendation for leadership
+"""
+        else:
+            prompt = f"""
+{summary_context}
+
+Generate an executive summary.
+Provide:
+1. Key performance insight
+2. Any risk or concern
+3. One recommendation for leadership
+"""
+
+        safe_prompt = prompt.replace("'", "''")
+
+        cortex_query = f"""
+        SELECT SNOWFLAKE.CORTEX.COMPLETE(
+            'mistral-large',
+            '{safe_prompt}'
+        ) AS SUMMARY
+        """
+
+        with st.spinner("Generating Snowflake Cortex insight..."):
+            summary_df = pd.read_sql(cortex_query, conn)
+
+        st.markdown("### AI Response")
+        st.write(summary_df["SUMMARY"].iloc[0])
