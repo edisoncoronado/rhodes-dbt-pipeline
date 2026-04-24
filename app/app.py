@@ -497,11 +497,13 @@ st.caption(
 if len(df) == 0:
     st.warning("No data available for the current filters.")
 else:
-    regional_summary = (
-        df.groupby("REGION")
+    perspective_summary = (
+        df.groupby(selected_column)
         .agg(
             total_sales=("CONTRACT_PRICE", "sum"),
             avg_contract=("CONTRACT_PRICE", "mean"),
+            base_price=("BASE_PRICE", "sum"),
+            avg_base_price=("BASE_PRICE", "mean"),
             cancellation_rate=("CANCELLATION_FLAG", "mean"),
             avg_days_to_close=("DAYS_TO_CLOSE", "mean"),
             sold_units=("SOLD_FLAG", "sum")
@@ -509,7 +511,7 @@ else:
         .reset_index()
     )
 
-    regional_text = regional_summary.to_string(index=False)
+    perspective_text = perspective_summary.to_string(index=False)
 
     user_question = st.text_input(
         "Ask a question about the current dashboard data",
@@ -520,15 +522,15 @@ else:
         prompt = f"""
 You are a sales analytics assistant for a homebuilder leadership team.
 
-Use the regional performance summary below to answer in business terms.
+Use the {selected_column} performance summary below to answer in business terms.
 
-Regional performance data:
-{regional_text}
+{selected_column} performance data:
+{perspective_text}
 
 Current selected dashboard perspective: {perspective}
 
 User question:
-{user_question if user_question else "Provide an executive summary of regional performance."}
+{user_question if user_question else "Provide an executive summary of performance."}
 
 Provide:
 1. Key performance insight
