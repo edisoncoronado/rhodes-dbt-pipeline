@@ -25,6 +25,14 @@ select
         when upper(trim(STATUS)) =  'CANCELED' then 1
         else 0
     end as cancellation_flag,
+    case
+        when upper(trim(STATUS)) =  'CLOSED' and CONTRACT_PRICE > 0 then 1
+        else 0
+    end as sold_flag,
+    case
+        when upper(trim(STATUS)) =  'UNDER CONTRACT' then 1
+        else 0
+    end as under_contract_flag,
 	STATUS,
 	BUYER_SOURCE,
 	AGENT_COMMISSION,
