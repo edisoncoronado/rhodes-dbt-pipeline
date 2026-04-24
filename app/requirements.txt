@@ -4,3 +4,4 @@ snowflake-connector-python
 sqlalchemy
 snowflake-sqlalchemy
 plotly
+openai
