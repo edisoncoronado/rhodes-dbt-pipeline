@@ -408,7 +408,7 @@ st.plotly_chart(fig1)
 counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
 counts = counts.sort_values(by="CONTRACT_ID", ascending=False)
 
-fig1 = px.bar(
+fig2 = px.bar(
     counts,
     x=selected_column,
     y="CONTRACT_ID",
@@ -422,16 +422,16 @@ fig1 = px.bar(
 )
 
 
-st.plotly_chart(fig1)
+st.plotly_chart(fig2)
 
 
 
-# Chart 2
+# Chart 3
 
 cancellation_rate = df.groupby(selected_column)["CANCELLATION_FLAG"].mean().reset_index()
 cancellation_rate = cancellation_rate.sort_values(by="CANCELLATION_FLAG", ascending=False)
 
-fig2 = px.bar(
+fig3 = px.bar(
     cancellation_rate,
     x=selected_column,
     y="CANCELLATION_FLAG",
@@ -444,9 +444,45 @@ fig2 = px.bar(
     }
 )
 
-fig2.update_layout(
+fig3.update_layout(
     yaxis_tickformat=".2%"  
 )
 
-st.plotly_chart(fig2)
+st.plotly_chart(fig3)
 
+
+df["CONTRACT_DATE"] = pd.to_datetime(df["CONTRACT_DATE"], errors="coerce")
+df["MONTH"] = df["CONTRACT_DATE"].dt.to_period("M").dt.to_timestamp()
+
+monthly_sales = (
+    df.groupby(["MONTH", selected_column])["CONTRACT_PRICE"]
+    .sum()
+    .reset_index()
+)
+
+fig4 = px.line(
+    monthly_sales,
+    x="MONTH",
+    y="CONTRACT_PRICE",
+    color=selected_column,
+    color_discrete_map=color_map,
+    title=f"Monthly Sales Trend by {perspective}",
+    labels={
+        "MONTH": "Month",
+        "CONTRACT_PRICE": "Total Sales",
+        selected_column: perspective
+    }
+)
+
+fig4.update_layout(
+    yaxis_tickprefix="$",
+    yaxis_tickformat=",",
+    xaxis_title="Month",
+    yaxis_title="Total Sales"
+)
+
+fig4.update_traces(
+    hovertemplate=f"{perspective}: %{{legendgroup}}<br>Month: %{{x|%b %Y}}<br>Sales: $%{{y:,.0f}}<extra></extra>"
+)
+
+st.plotly_chart(fig4, use_container_width=True)
