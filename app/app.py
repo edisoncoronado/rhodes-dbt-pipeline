@@ -205,8 +205,6 @@ def date_range_filter(dataframe, column, label, keep_nulls=True):
 
     return dataframe
 
-df = date_range_filter(df, "CONTRACT_DATE", "Contract Date Range")
-df = date_range_filter(df, "CLOSE_DATE", "Closing Date Range")
 
 df = date_range_filter(df, "CONTRACT_DATE", "Contract Date Range")
 df = date_range_filter(df, "CLOSE_DATE", "Closing Date Range")
