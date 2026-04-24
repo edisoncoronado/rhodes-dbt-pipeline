@@ -4,7 +4,7 @@ import snowflake.connector
 import plotly.express as px
 import os
 import base64
-from openai import OpenAI
+
 
 logo_path = os.path.join(os.path.dirname(__file__), "logo.svg")
 
