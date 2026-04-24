@@ -361,7 +361,6 @@ if selected_column == "REGIONAL_MANAGER":
 st.plotly_chart(fig2)
 
 
-
 # cancellation rate
 
 cancellation_rate = df.groupby(selected_column)["CANCELLATION_FLAG"].mean().reset_index()
