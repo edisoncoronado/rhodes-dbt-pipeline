@@ -164,6 +164,8 @@ def date_range_filter(dataframe, column, label, keep_nulls=True):
     min_date = date_df[column].min().date()
     max_date = date_df[column].max().date()
 
+    widget_key = f"{column}_{label}".replace(" ", "_").lower()
+
     st.sidebar.markdown(f"**{label}**")
 
     date_range = st.sidebar.date_input(
@@ -172,7 +174,7 @@ def date_range_filter(dataframe, column, label, keep_nulls=True):
         min_value=min_date,
         max_value=max_date,
         label_visibility="collapsed",
-        key=f"{column}_date_range"
+        key=f"{widget_key}_date_range"
     )
 
     include_nulls = False
@@ -181,7 +183,7 @@ def date_range_filter(dataframe, column, label, keep_nulls=True):
         include_nulls = st.sidebar.checkbox(
             f"Include records with no {label.lower()}",
             value=True,
-            key=f"{column}_include_nulls"
+            key=f"{widget_key}_include_nulls"
         )
 
     if isinstance(date_range, tuple) and len(date_range) == 2:
