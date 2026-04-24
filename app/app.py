@@ -314,8 +314,20 @@ st.plotly_chart(fig1)
 
 # count of contracts
 
+
+st.write("Selected column:", selected_column)
+st.write("Perspective:", perspective)
+
+
 if selected_column == "REGIONAL_MANAGER":
-    counts = null 
+    counts = (
+        df.groupby(selected_column)
+        .agg(
+            CONTRACT_ID=("CONTRACT_ID", "count"),
+            SALES_TARGET_UNITS=("SALES_TARGET_UNITS", "max")
+        )
+        .reset_index()
+    )
 else:
     counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
 
@@ -352,6 +364,7 @@ if selected_column == "REGIONAL_MANAGER":
     )
 
 st.plotly_chart(fig2)
+
 
 
 # cancellation rate
