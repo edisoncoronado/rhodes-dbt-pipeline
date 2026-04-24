@@ -573,3 +573,163 @@ Keep the response concise, business-friendly, and grounded only in the provided 
 
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+with st.expander("💬 Ask the Data", expanded=False):
+    st.caption(
+        "Ask plain-English questions about the currently filtered dashboard data. "
+        "The assistant is grounded in the filtered mart data and column definitions."
+    )
+
+    # Column context / data dictionary
+    column_context = """
+Column definitions:
+- CONTRACT_ID: Unique sales contract identifier.
+- COMMUNITY: Community or subdivision where the home was sold.
+- CITY: City where the community is located.
+- REGION: Sales region.
+- PLAN_NAME: Home floor plan name.
+- SQFT: Home square footage.
+- BEDROOMS: Number of bedrooms.
+- BATHROOMS: Number of bathrooms.
+- BASE_PRICE: Starting/base home price before upgrades and incentives.
+- UPGRADE_AMOUNT: Dollar amount of upgrades added to the home.
+- INCENTIVE_AMOUNT: Dollar amount of buyer incentives or discounts.
+- CONTRACT_PRICE: Final contract sales price.
+- CONTRACT_DATE: Date the buyer entered contract.
+- CLOSE_DATE: Date the home closed, if closed.
+- DAYS_TO_CLOSE: Days between contract date and close date.
+- DAYS_TO_CLOSE_CAL: Calculated days to close from dbt logic.
+- PRICE_PER_SQUARE_FOOT: Contract price divided by square footage.
+- CANCELLATION_FLAG: 1 if canceled, 0 otherwise.
+- SOLD_FLAG: 1 if sold/closed, 0 otherwise.
+- UNDER_CONTRACT_FLAG: 1 if currently under contract, 0 otherwise.
+- STATUS: Current transaction status.
+- BUYER_SOURCE: Source/channel that brought the buyer.
+- AGENT_COMMISSION: Commission amount.
+- LOAN_TYPE: Buyer financing type.
+- SALES_CONSULTANT: Sales consultant assigned to the transaction.
+- REGIONAL_MANAGER: Regional manager tied to the region.
+- SALES_TARGET_UNITS: Regional sales unit target.
+- MARGIN_TARGET_PCT: Regional margin target percentage.
+"""
+
+    # High-level filtered data context
+    filtered_summary = f"""
+Current filtered dataset summary:
+- Rows: {len(df)}
+- Total contract sales: ${df["CONTRACT_PRICE"].sum():,.0f}
+- Average contract price: ${df["CONTRACT_PRICE"].mean():,.0f}
+- Average base price: ${df["BASE_PRICE"].mean():,.0f}
+- Total upgrades: ${df["UPGRADE_AMOUNT"].sum():,.0f}
+- Total incentives: ${df["INCENTIVE_AMOUNT"].sum():,.0f}
+- Average price per square foot: ${df["PRICE_PER_SQUARE_FOOT"].mean():,.2f}
+- Total sold units: {df["SOLD_FLAG"].sum():,.0f}
+- Total under contract: {df["UNDER_CONTRACT_FLAG"].sum():,.0f}
+- Cancellation rate: {df["CANCELLATION_FLAG"].mean():.2%}
+- Average days to close: {df["DAYS_TO_CLOSE"].mean():.1f}
+- Current perspective selected: {perspective}
+"""
+
+    # Perspective-level summary
+    perspective_summary = (
+        df.groupby(selected_column, dropna=False)
+        .agg(
+            total_records=("CONTRACT_ID", "count"),
+            total_sales=("CONTRACT_PRICE", "sum"),
+            avg_contract_price=("CONTRACT_PRICE", "mean"),
+            avg_price_per_sqft=("PRICE_PER_SQUARE_FOOT", "mean"),
+            cancellation_rate=("CANCELLATION_FLAG", "mean"),
+            sold_units=("SOLD_FLAG", "sum"),
+            under_contract_units=("UNDER_CONTRACT_FLAG", "sum"),
+            avg_days_to_close=("DAYS_TO_CLOSE", "mean"),
+        )
+        .reset_index()
+        .sort_values("total_sales", ascending=False)
+        .head(15)
+        .round(2)
+    )
+
+    perspective_context = f"""
+Performance by selected perspective: {perspective}
+{perspective_summary.to_string(index=False)}
+"""
+
+    # Small sample of row-level data
+    sample_columns = [
+        "CONTRACT_ID",
+        "COMMUNITY",
+        "CITY",
+        "REGION",
+        "PLAN_NAME",
+        "SQFT",
+        "BEDROOMS",
+        "BATHROOMS",
+        "BASE_PRICE",
+        "UPGRADE_AMOUNT",
+        "INCENTIVE_AMOUNT",
+        "CONTRACT_PRICE",
+        "CONTRACT_DATE",
+        "CLOSE_DATE",
+        "DAYS_TO_CLOSE",
+        "DAYS_TO_CLOSE_CAL",
+        "PRICE_PER_SQUARE_FOOT",
+        "CANCELLATION_FLAG",
+        "SOLD_FLAG",
+        "UNDER_CONTRACT_FLAG",
+        "STATUS",
+        "BUYER_SOURCE",
+        "AGENT_COMMISSION",
+        "LOAN_TYPE",
+        "SALES_CONSULTANT",
+        "REGIONAL_MANAGER",
+        "SALES_TARGET_UNITS",
+        "MARGIN_TARGET_PCT",
+    ]
+
+    available_sample_columns = [c for c in sample_columns if c in df.columns]
+
+    sample_data = (
+        df[available_sample_columns]
+        .head(25)
+        .to_string(index=False)
+    )
+
+    user_question = st.text_input(
+        "Ask a question",
+        placeholder="Example: Which sales consultant should leadership focus on?"
+    )
+
+    if st.button("Ask ChatGPT"):
+        if df.empty:
+            st.warning("No data is available for the current filters.")
+        elif not user_question.strip():
+            st.warning("Please enter a question.")
+        else:
+            prompt = f"""
+You are a business analytics assistant for a homebuilder sales dashboard.
+
+Answer the user's question using only the provided data context.
+Do not invent facts. If the provided data is not enough, say what is missing.
+Keep the answer concise, business-friendly, and actionable.
+
+{column_context}
+
+{filtered_summary}
+
+{perspective_context}
+
+Sample row-level data from the current filters:
+{sample_data}
+
+User question:
+{user_question}
+"""
+
+            with st.spinner("Generating answer..."):
+                response = client.responses.create(
+                    model="gpt-4.1-mini",
+                    input=prompt
+                )
+
+            st.markdown("### Answer")
+            st.write(response.output_text)
