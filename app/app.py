@@ -153,7 +153,7 @@ df = range_slider_filter(df, "BEDROOMS", "Bedrooms Range", 1, "%d")
 df = range_slider_filter(df, "BATHROOMS", "Bathrooms Range", 0.5, "%.1f", value_type="float")
 
 
-def date_range_filter(dataframe, column, label):
+def date_range_filter(dataframe, column, label, keep_nulls=True):
     dataframe[column] = pd.to_datetime(dataframe[column], errors="coerce")
     date_df = dataframe[dataframe[column].notna()].copy()
 
@@ -171,8 +171,18 @@ def date_range_filter(dataframe, column, label):
         value=(min_date, max_date),
         min_value=min_date,
         max_value=max_date,
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key=f"{column}_date_range"
     )
+
+    include_nulls = False
+
+    if dataframe[column].isna().any() and keep_nulls:
+        include_nulls = st.sidebar.checkbox(
+            f"Include records with no {label.lower()}",
+            value=True,
+            key=f"{column}_include_nulls"
+        )
 
     if isinstance(date_range, tuple) and len(date_range) == 2:
         start_date, end_date = date_range
@@ -181,12 +191,20 @@ def date_range_filter(dataframe, column, label):
             f"{start_date.strftime('%m/%d/%Y')} – {end_date.strftime('%m/%d/%Y')}"
         )
 
-        return dataframe[
+        date_filter = (
             (dataframe[column].dt.date >= start_date) &
             (dataframe[column].dt.date <= end_date)
-        ]
+        )
+
+        if include_nulls:
+            date_filter = date_filter | dataframe[column].isna()
+
+        return dataframe[date_filter]
 
     return dataframe
+
+df = date_range_filter(df, "CONTRACT_DATE", "Contract Date Range")
+df = date_range_filter(df, "CLOSE_DATE", "Closing Date Range")
 
 df = date_range_filter(df, "CONTRACT_DATE", "Contract Date Range")
 df = date_range_filter(df, "CLOSE_DATE", "Closing Date Range")
@@ -270,7 +288,6 @@ color_map = {
     value: palette[i % len(palette)]
     for i, value in enumerate(category_values)
 }
-
 
 
 
