@@ -18,7 +18,7 @@ select
 	case
     when upper(trim(STATUS)) in ('CANCELLED', 'CANCELED') then 'CANCELED'
     else upper(trim(STATUS))
-end as STATUS,
+    end as STATUS,
 	BUYER_SOURCE,
 	AGENT_COMMISSION,
 	LOAN_TYPE,
