@@ -79,8 +79,7 @@ def multiselect_filter(dataframe, column, label):
 
     selected = st.sidebar.multiselect(
         label,
-        options=["All"] + options,
-        default=["All"]
+        options= options
     )
 
     if "All" in selected or len(selected) == 0:
@@ -153,10 +152,43 @@ df = range_slider_filter(df, "SQFT", "SQFT Range", 50, "%d")
 df = range_slider_filter(df, "BEDROOMS", "Bedrooms Range", 1, "%d")
 df = range_slider_filter(df, "BATHROOMS", "Bathrooms Range", 0.5, "%.1f", value_type="float")
 
-st.sidebar.markdown("**Contract Date Range**")
-st.sidebar.caption(
-    f"{date_range[0].strftime('%m/%d/%Y')} – {date_range[1].strftime('%m/%d/%Y')}"
-)
+
+def date_range_filter(dataframe, column, label):
+    dataframe[column] = pd.to_datetime(dataframe[column], errors="coerce")
+    date_df = dataframe[dataframe[column].notna()].copy()
+
+    if date_df.empty:
+        st.sidebar.caption(f"{label} not available for current filters")
+        return dataframe
+
+    min_date = date_df[column].min().date()
+    max_date = date_df[column].max().date()
+
+    st.sidebar.markdown(f"**{label}**")
+
+    date_range = st.sidebar.date_input(
+        label,
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date,
+        label_visibility="collapsed"
+    )
+
+    if isinstance(date_range, tuple) and len(date_range) == 2:
+        start_date, end_date = date_range
+
+        st.sidebar.caption(
+            f"{start_date.strftime('%m/%d/%Y')} – {end_date.strftime('%m/%d/%Y')}"
+        )
+
+        return dataframe[
+            (dataframe[column].dt.date >= start_date) &
+            (dataframe[column].dt.date <= end_date)
+        ]
+
+    return dataframe
+
+df = date_range_filter(df, "CONTRACT_DATE", "Contract Date Range")
 
 
 
