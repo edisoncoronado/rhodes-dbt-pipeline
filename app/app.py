@@ -74,225 +74,83 @@ selected_column = perspectives.loc[
 ].values[0]
 
 
- 
-region = st.sidebar.selectbox("Filter Region", ["All"] + sorted(df["REGION"].dropna().unique().tolist()))
-if region != "All":
-    df = df[df["REGION"] == region]
+def multiselect_filter(dataframe, column, label):
+    options = sorted(dataframe[column].dropna().unique().tolist())
 
-community = st.sidebar.selectbox("Filter Community", ["All"] + sorted(df["COMMUNITY"].dropna().unique().tolist()))
-if community != "All":
-    df = df[df["COMMUNITY"] == community]
-
-city = st.sidebar.selectbox("Filter City", ["All"] + sorted(df["CITY"].dropna().unique().tolist()))
-if city != "All":
-    df = df[df["CITY"] == city]
-
-plan_name = st.sidebar.selectbox("Filter Plan Name", ["All"] + sorted(df["PLAN_NAME"].dropna().unique().tolist()))
-if plan_name != "All":
-    df = df[df["PLAN_NAME"] == plan_name]
-
-loan_type = st.sidebar.selectbox("Filter Loan Type", ["All"] + sorted(df["LOAN_TYPE"].dropna().unique().tolist()))
-if loan_type != "All":
-    df = df[df["LOAN_TYPE"] == loan_type]
-
-sales_consultant = st.sidebar.selectbox("Filter Sales Consultant", ["All"] + sorted(df["SALES_CONSULTANT"].dropna().unique().tolist()))
-if sales_consultant != "All":
-    df = df[df["SALES_CONSULTANT"] == sales_consultant]
-
-regional_manager = st.sidebar.selectbox("Filter Regional Manager", ["All"] + sorted(df["REGIONAL_MANAGER"].dropna().unique().tolist()))
-if regional_manager != "All":
-    df = df[df["REGIONAL_MANAGER"] == regional_manager]
-
-buyer_source = st.sidebar.selectbox("Filter Buyer Source", ["All"] + sorted(df["BUYER_SOURCE"].dropna().unique().tolist()))
-if buyer_source != "All":
-    df = df[df["BUYER_SOURCE"] == buyer_source]
-
-status = st.sidebar.selectbox("Filter Status", ["All"] + sorted(df["STATUS"].dropna().unique().tolist()))
-if status != "All":
-    df = df[df["STATUS"] == status]
-
-
-min_price = int(df["CONTRACT_PRICE"].min())
-max_price = int(df["CONTRACT_PRICE"].max())
-price_range = st.sidebar.slider(
-    "Contract Price Range",
-    min_value=min_price,
-    max_value=max_price,
-    value=(min_price, max_price),
-    step=1000,
-    format="$%d"
-)
-df = df[
-    (df["CONTRACT_PRICE"] >= price_range[0]) &
-    (df["CONTRACT_PRICE"] <= price_range[1])
-]
-
-min_base_price = int(df["BASE_PRICE"].min())
-max_base_price = int(df["BASE_PRICE"].max())
-base_price_range = st.sidebar.slider(
-    "Base Price Range",
-    min_value=min_base_price,
-    max_value=max_base_price,
-    value=(min_base_price, max_base_price),
-    step=1000,
-    format="$%d"
-)
-df = df[
-    (df["BASE_PRICE"] >= base_price_range[0]) &
-    (df["BASE_PRICE"] <= base_price_range[1])
-]
-
-min_upgrade_amount = int(df["UPGRADE_AMOUNT"].min())
-max_upgrade_amount = int(df["UPGRADE_AMOUNT"].max())
-upgrade_amount_range = st.sidebar.slider(
-    "Upgrade Amount Range",
-    min_value=min_upgrade_amount,
-    max_value=max_upgrade_amount,
-    value=(min_upgrade_amount, max_upgrade_amount),
-    step=500,
-    format="$%d"
-)
-df = df[
-    (df["UPGRADE_AMOUNT"] >= upgrade_amount_range[0]) &
-    (df["UPGRADE_AMOUNT"] <= upgrade_amount_range[1])
-]
-
-min_incentive_amount = int(df["INCENTIVE_AMOUNT"].min())
-max_incentive_amount = int(df["INCENTIVE_AMOUNT"].max())
-incentive_amount_range = st.sidebar.slider(
-    "Incentive Amount Range",
-    min_value=min_incentive_amount,
-    max_value=max_incentive_amount,
-    value=(min_incentive_amount, max_incentive_amount),
-    step=500,
-    format="$%d"
-)
-df = df[
-    (df["INCENTIVE_AMOUNT"] >= incentive_amount_range[0]) &
-    (df["INCENTIVE_AMOUNT"] <= incentive_amount_range[1])
-]
-
-
-min_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].min())
-max_ppsf = int(df["PRICE_PER_SQUARE_FOOT"].max())
-ppsf_range = st.sidebar.slider(
-    "Price Per Square Ft Range",
-    min_value=min_ppsf,
-    max_value=max_ppsf,
-    value=(min_ppsf, max_ppsf),
-    step=5,
-    format="$%d"
-)
-df = df[
-    (df["PRICE_PER_SQUARE_FOOT"] >= ppsf_range[0]) &
-    (df["PRICE_PER_SQUARE_FOOT"] <= ppsf_range[1])
-]
-
-
-commission_df = df[df["AGENT_COMMISSION"].notna()]
-min_commission = int(commission_df["AGENT_COMMISSION"].min())
-max_commission = int(commission_df["AGENT_COMMISSION"].max())
-commission_range = st.sidebar.slider(
-    "Agent Commission Range",
-    min_value=min_commission,
-    max_value=max_commission,
-    value=(min_commission, max_commission),
-    step=100,
-    format="$%d"
-)
-df = df[
-    (df["AGENT_COMMISSION"].isna()) |   
-    (
-        (df["AGENT_COMMISSION"] >= commission_range[0]) &
-        (df["AGENT_COMMISSION"] <= commission_range[1])
-    )
-]
-
-
-days_closed_df = df[df["DAYS_TO_CLOSE"].notna()].copy()
-
-if not days_closed_df.empty:
-    min_days_closed = int(days_closed_df["DAYS_TO_CLOSE"].min())
-    max_days_closed = int(days_closed_df["DAYS_TO_CLOSE"].max())
-
-    days_closed_range = st.sidebar.slider(
-        "Days to Close Range",
-        min_value=min_days_closed,
-        max_value=max_days_closed,
-        value=(min_days_closed, max_days_closed),
-        step=30,
-        format="%d"
+    selected = st.sidebar.multiselect(
+        label,
+        options=["All"] + options,
+        default=["All"]
     )
 
-    df = df[
-        (df["DAYS_TO_CLOSE"].isna()) |
-        (
-            (df["DAYS_TO_CLOSE"] >= days_closed_range[0]) &
-            (df["DAYS_TO_CLOSE"] <= days_closed_range[1])
-        )
+    if "All" in selected or len(selected) == 0:
+        return dataframe
+
+    return dataframe[dataframe[column].isin(selected)]
+
+
+df = multiselect_filter(df, "REGION", "Select Region")
+df = multiselect_filter(df, "COMMUNITY", "Select Community")
+df = multiselect_filter(df, "CITY", "Select City")
+df = multiselect_filter(df, "PLAN_NAME", "Select Plan Name")
+df = multiselect_filter(df, "LOAN_TYPE", "Select Loan Type")
+df = multiselect_filter(df, "SALES_CONSULTANT", "Select Sales Consultant")
+df = multiselect_filter(df, "REGIONAL_MANAGER", "Select Regional Manager")
+df = multiselect_filter(df, "BUYER_SOURCE", "Select Buyer Source")
+df = multiselect_filter(df, "STATUS", "Select Status")
+
+def range_slider_filter(dataframe, column, label, step, number_format, value_type="int", keep_nulls=False ):
+    slider_df = dataframe[dataframe[column].notna()].copy()
+
+    if slider_df.empty:
+        st.sidebar.caption(f"{label} not available for current filters")
+        return dataframe
+
+    if value_type == "float":
+        min_value = float(slider_df[column].min())
+        max_value = float(slider_df[column].max())
+    else:
+        min_value = int(slider_df[column].min())
+        max_value = int(slider_df[column].max())
+
+    if min_value == max_value:
+        st.sidebar.caption(f"{label}: {min_value}")
+        return dataframe
+
+    selected_range = st.sidebar.slider(
+        label,
+        min_value=min_value,
+        max_value=max_value,
+        value=(min_value, max_value),
+        step=step,
+        format=number_format
+    )
+
+    if keep_nulls:
+        return dataframe[
+            dataframe[column].isna() |
+            (
+                (dataframe[column] >= selected_range[0]) &
+                (dataframe[column] <= selected_range[1])
+            )
+        ]
+
+    return dataframe[
+        (dataframe[column] >= selected_range[0]) &
+        (dataframe[column] <= selected_range[1])
     ]
 
 
-min_sqft = int(df["SQFT"].min())
-max_sqft = int(df["SQFT"].max())
-sqft_range = st.sidebar.slider(
-    "SQFT Range",
-    min_value=min_sqft,
-    max_value=max_sqft,
-    value=(min_sqft, max_sqft),
-    step=50,
-    format="%d"
-)
-df = df[
-    (df["SQFT"] >= sqft_range[0]) &
-    (df["SQFT"] <= sqft_range[1])
-]
-
-min_bedrooms = int(df["BEDROOMS"].min())
-max_bedrooms = int(df["BEDROOMS"].max())
-bedrooms_range = st.sidebar.slider(
-    "Bedrooms Range",
-    min_value=min_bedrooms,
-    max_value=max_bedrooms,
-    value=(min_bedrooms, max_bedrooms),
-    step=1,
-    format="%d"
-)
-df = df[
-    (df["BEDROOMS"] >= bedrooms_range[0]) &
-    (df["BEDROOMS"] <= bedrooms_range[1])
-]
-
-min_bathrooms = float(df["BATHROOMS"].min())
-max_bathrooms = float(df["BATHROOMS"].max())
-bathrooms_range = st.sidebar.slider(
-    "Bathrooms Range",
-    min_value=min_bathrooms,
-    max_value=max_bathrooms,
-    value=(min_bathrooms, max_bathrooms),
-    step=0.5,
-    format="%.1f"
-)
-df = df[
-    (df["BATHROOMS"] >= bathrooms_range[0]) &
-    (df["BATHROOMS"] <= bathrooms_range[1])
-]
-
-
-
-df["CONTRACT_DATE"] = pd.to_datetime(df["CONTRACT_DATE"], errors="coerce")
-df = df[df["CONTRACT_DATE"].notna()]
-
-min_date = df["CONTRACT_DATE"].min().date()
-max_date = df["CONTRACT_DATE"].max().date()
-
-date_range = st.sidebar.date_input(
-    "Contract Date Range",
-    value=(min_date, max_date),
-    min_value=min_date,
-    max_value=max_date,
-   label_visibility="collapsed"
-)
+df = range_slider_filter(df, column="CONTRACT_PRICE", label="Contract Price Range", step=1000, number_format="$%d")
+df = range_slider_filter(df, column="BASE_PRICE", label="Base Price Range", step=1000, number_format="$%d")
+df = range_slider_filter(df, column="UPGRADE_AMOUNT", label="Upgrade Amount Range", step=500, number_format="$%d")
+df = range_slider_filter(df, column="INCENTIVE_AMOUNT", label="Incentive Amount Range", step=500, number_format="$%d")
+df = range_slider_filter(df, column="PRICE_PER_SQUARE_FOOT", label="Price Per Square Ft Range", step=5, number_format="$%d")
+df = range_slider_filter(df, column="AGENT_COMMISSION", label="Agent Commission Range", step=100, number_format="$%d", keep_nulls=True)
+df = range_slider_filter(df, column="DAYS_TO_CLOSE", label="Days to Close Range", step=30, number_format="%d", keep_nulls=True)
+df = range_slider_filter(df, column="SQFT", label="SQFT Range", step=50, number_format="%d")
+df = range_slider_filter(df, column="BEDROOMS", label="Bedrooms Range", step=1, number_format="%d")
+df = range_slider_filter(df, column="BATHROOMS", label="Bathrooms Range", step=0.5, number_format="%.1f", value_type="float")
 
 st.sidebar.markdown("**Contract Date Range**")
 st.sidebar.caption(
