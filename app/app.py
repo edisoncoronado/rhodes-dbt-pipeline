@@ -291,7 +291,7 @@ color_map = {
 
 
 
-# Chart 1
+# sales from contract price
 
 sales = df.groupby(selected_column)["CONTRACT_PRICE"].sum().reset_index()
 sales = sales.sort_values(by="CONTRACT_PRICE", ascending=False)
@@ -302,7 +302,7 @@ fig1 = px.bar(
     y="CONTRACT_PRICE",
     color=selected_column, 
     color_discrete_map=color_map,
-    title=f"Contracts by {perspective}",
+    title=f"Sales by {perspective}",
     labels={
         selected_column: perspective,       
         "CONTRACT_PRICE": "Total Sales of Contracts"
@@ -312,30 +312,57 @@ fig1 = px.bar(
 
 st.plotly_chart(fig1)
 
-# Chart 2
+# count of contracts
 
-counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
+if selected_column == "REGIONAL_MANAGER":
+    counts = (
+        df.groupby(selected_column)
+        .agg(
+            CONTRACT_ID=("CONTRACT_ID", "count"),
+            SALES_TARGET_UNITS=("SALES_TARGET_UNITS", "max")
+        )
+        .reset_index()
+    )
+else:
+    counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
+
 counts = counts.sort_values(by="CONTRACT_ID", ascending=False)
 
 fig2 = px.bar(
     counts,
     x=selected_column,
     y="CONTRACT_ID",
-    color=selected_column, 
+    color=selected_column,
     color_discrete_map=color_map,
     title=f"Count of Contracts by {perspective}",
     labels={
-        selected_column: perspective,       
+        selected_column: perspective,
         "CONTRACT_ID": "Count of Contracts"
     }
 )
 
+if selected_column == "REGIONAL_MANAGER":
+    fig2.add_scatter(
+        x=counts[selected_column],
+        y=counts["SALES_TARGET_UNITS"],
+        mode="lines+markers",
+        name="Target Units",
+        yaxis="y2"
+    )
+
+    fig2.update_layout(
+        yaxis2=dict(
+            overlaying="y",
+            side="right",
+            title="Target Units"
+        )
+    )
 
 st.plotly_chart(fig2)
 
 
 
-# Chart 3
+# cancellation rate
 
 cancellation_rate = df.groupby(selected_column)["CANCELLATION_FLAG"].mean().reset_index()
 cancellation_rate = cancellation_rate.sort_values(by="CANCELLATION_FLAG", ascending=False)
