@@ -99,7 +99,7 @@ df = multiselect_filter(df, "REGIONAL_MANAGER", "Select Regional Manager")
 df = multiselect_filter(df, "BUYER_SOURCE", "Select Buyer Source")
 df = multiselect_filter(df, "STATUS", "Select Status")
 
-def range_slider_filter(dataframe, column, label, step, number_format, value_type="int", keep_nulls=False ):
+def range_slider_filter(dataframe, column, label, step, number_format, value_type="int", keep_nulls=False):
     slider_df = dataframe[dataframe[column].notna()].copy()
 
     if slider_df.empty:
@@ -109,9 +109,11 @@ def range_slider_filter(dataframe, column, label, step, number_format, value_typ
     if value_type == "float":
         min_value = float(slider_df[column].min())
         max_value = float(slider_df[column].max())
+        step = float(step)
     else:
         min_value = int(slider_df[column].min())
         max_value = int(slider_df[column].max())
+        step = int(step)
 
     if min_value == max_value:
         st.sidebar.caption(f"{label}: {min_value}")
@@ -140,17 +142,16 @@ def range_slider_filter(dataframe, column, label, step, number_format, value_typ
         (dataframe[column] <= selected_range[1])
     ]
 
-
-df = range_slider_filter(df, column="CONTRACT_PRICE", label="Contract Price Range", step=1000, number_format="$%d")
-df = range_slider_filter(df, column="BASE_PRICE", label="Base Price Range", step=1000, number_format="$%d")
-df = range_slider_filter(df, column="UPGRADE_AMOUNT", label="Upgrade Amount Range", step=500, number_format="$%d")
-df = range_slider_filter(df, column="INCENTIVE_AMOUNT", label="Incentive Amount Range", step=500, number_format="$%d")
-df = range_slider_filter(df, column="PRICE_PER_SQUARE_FOOT", label="Price Per Square Ft Range", step=5, number_format="$%d")
-df = range_slider_filter(df, column="AGENT_COMMISSION", label="Agent Commission Range", step=100, number_format="$%d", keep_nulls=True)
-df = range_slider_filter(df, column="DAYS_TO_CLOSE", label="Days to Close Range", step=30, number_format="%d", keep_nulls=True)
-df = range_slider_filter(df, column="SQFT", label="SQFT Range", step=50, number_format="%d")
-df = range_slider_filter(df, column="BEDROOMS", label="Bedrooms Range", step=1, number_format="%d")
-df = range_slider_filter(df, column="BATHROOMS", label="Bathrooms Range", step=0.5, number_format="%.1f", value_type="float")
+df = range_slider_filter(df, "CONTRACT_PRICE", "Contract Price Range", 1000, "$%d")
+df = range_slider_filter(df, "BASE_PRICE", "Base Price Range", 1000, "$%d")
+df = range_slider_filter(df, "UPGRADE_AMOUNT", "Upgrade Amount Range", 500, "$%d")
+df = range_slider_filter(df, "INCENTIVE_AMOUNT", "Incentive Amount Range", 500, "$%d")
+df = range_slider_filter(df, "PRICE_PER_SQUARE_FOOT", "Price Per Square Ft Range", 5, "$%d")
+df = range_slider_filter(df, "AGENT_COMMISSION", "Agent Commission Range", 100, "$%d", keep_nulls=True)
+df = range_slider_filter(df, "DAYS_TO_CLOSE", "Days to Close Range", 30, "%d", keep_nulls=True)
+df = range_slider_filter(df, "SQFT", "SQFT Range", 50, "%d")
+df = range_slider_filter(df, "BEDROOMS", "Bedrooms Range", 1, "%d")
+df = range_slider_filter(df, "BATHROOMS", "Bathrooms Range", 0.5, "%.1f", value_type="float")
 
 st.sidebar.markdown("**Contract Date Range**")
 st.sidebar.caption(
