@@ -315,10 +315,6 @@ st.plotly_chart(fig1)
 # count of contracts
 
 
-st.write("Selected column:", selected_column)
-st.write("Perspective:", perspective)
-
-
 if selected_column == "REGIONAL_MANAGER":
     counts = (
         df.groupby(selected_column)
@@ -328,8 +324,15 @@ if selected_column == "REGIONAL_MANAGER":
         )
         .reset_index()
     )
+
+    counts["PCT_TO_TARGET"] = counts["CONTRACT_ID"] / counts["SALES_TARGET_UNITS"]
+
 else:
-    counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
+    counts = (
+        df.groupby(selected_column)["CONTRACT_ID"]
+        .count()
+        .reset_index()
+    )
 
 counts = counts.sort_values(by="CONTRACT_ID", ascending=False)
 
@@ -350,21 +353,20 @@ if selected_column == "REGIONAL_MANAGER":
     fig2.add_scatter(
         x=counts[selected_column],
         y=counts["SALES_TARGET_UNITS"],
-        mode="lines+markers",
+        mode="markers+lines+text",
         name="Target Units",
-        yaxis="y2"
+        text=counts["SALES_TARGET_UNITS"],
+        textposition="top center",
+        line=dict(color="black", width=3),
+        marker=dict(size=10, color="black")
     )
 
     fig2.update_layout(
-        yaxis2=dict(
-            overlaying="y",
-            side="right",
-            title="Target Units"
-        )
+        title=f"Count of Contracts vs Target Units by {perspective}",
+        yaxis_title="Count of Contracts / Target Units"
     )
 
-st.plotly_chart(fig2)
-
+st.plotly_chart(fig2, use_container_width=True)
 
 
 # cancellation rate
