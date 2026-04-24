@@ -353,11 +353,10 @@ if selected_column == "REGIONAL_MANAGER":
     fig2.add_scatter(
         x=counts[selected_column],
         y=counts["SALES_TARGET_UNITS"],
-        mode="markers+lines+text",
+        mode="markers+text",  
         name="Target Units",
         text=counts["SALES_TARGET_UNITS"],
         textposition="top center",
-        line=dict(color="black", width=3),
         marker=dict(size=10, color="black")
     )
 
