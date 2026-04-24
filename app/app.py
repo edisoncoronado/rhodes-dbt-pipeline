@@ -315,14 +315,7 @@ st.plotly_chart(fig1)
 # count of contracts
 
 if selected_column == "REGIONAL_MANAGER":
-    counts = (
-        df.groupby(selected_column)
-        .agg(
-            CONTRACT_ID=("CONTRACT_ID", "count"),
-            SALES_TARGET_UNITS=("SALES_TARGET_UNITS", "max")
-        )
-        .reset_index()
-    )
+    counts = null 
 else:
     counts = df.groupby(selected_column)["CONTRACT_ID"].count().reset_index()
 
