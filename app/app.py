@@ -342,6 +342,13 @@ col3.metric("Total Under Contract", df["UNDER_CONTRACT_FLAG"].sum())
 
 col4, col5, col6 = st.columns(3)
 
+contract_price = df['CONTRACT_PRICE'].mean()
+days_to_close = df['DAYS_TO_CLOSE'].mean()
+
+
+col4.metric("Avg Contract", f"${contract_price:,.0f}")
+col5.metric("Avg Days to Close", f"{days_to_close:,.0f}")
+
 df_dates = df[df["CONTRACT_DATE"].notna()].copy()
 
 if not df_dates.empty:
@@ -357,13 +364,10 @@ if not df_dates.empty:
 else:
     thirty_day_sales = 0
 
-col4.metric(
+col6.metric(
     "30-Day Avg Sales",
     f"${thirty_day_sales:,.0f}"
 )
-
-col5.metric("Avg Days to Close", f"{days_to_close:,.0f}")
-col6.metric("30 day Avg Sales", f"${thirty_days_avg_sales:,.2f}")
 
 
 category_values = sorted(df[selected_column].dropna().unique().tolist())
