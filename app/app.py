@@ -488,60 +488,53 @@ fig4.update_traces(
 st.plotly_chart(fig4, use_container_width=True)
 
 
-st.subheader("Snowflake Cortex AI Insights")
+st.subheader("Snowflake Cortex AI Summary")
 
 st.caption(
-    "This section uses Snowflake Cortex COMPLETE to generate business-friendly insights based on the current dashboard filters."
+    "Uses Snowflake Cortex COMPLETE to generate business-friendly insights from the current dashboard filters."
 )
 
-# Build summarized context from the filtered dataframe
-summary_context = f"""
-You are analyzing homebuilder sales performance for a leadership dashboard.
+if len(df) == 0:
+    st.warning("No data available for the current filters.")
+else:
+    regional_summary = (
+        df.groupby("REGION")
+        .agg(
+            total_sales=("CONTRACT_PRICE", "sum"),
+            avg_contract=("CONTRACT_PRICE", "mean"),
+            cancellation_rate=("CANCELLATION_FLAG", "mean"),
+            avg_days_to_close=("DAYS_TO_CLOSE", "mean"),
+            sold_units=("SOLD_FLAG", "sum")
+        )
+        .reset_index()
+    )
 
-Current filtered dashboard metrics:
-- Total Records: {len(df)}
-- Total Sold: {df["SOLD_FLAG"].sum():,.0f}
-- Total Contract Sales: ${df["CONTRACT_PRICE"].sum():,.0f}
-- Average Contract Price: ${df["CONTRACT_PRICE"].mean():,.0f}
-- Average Price per Square Foot: ${df["PRICE_PER_SQUARE_FOOT"].mean():,.2f}
-- Cancellation Rate: {df["CANCELLATION_FLAG"].mean():.2%}
-- Average Days to Close: {df["DAYS_TO_CLOSE"].mean():.1f}
-- Selected Perspective: {perspective}
+    regional_text = regional_summary.to_string(index=False)
 
-The answer should be useful for a business user, not technical.
-"""
+    user_question = st.text_input(
+        "Ask a question about the current dashboard data",
+        placeholder="Example: Which region should leadership focus on?"
+    )
 
-user_question = st.text_input(
-    "Ask a question about the current dashboard data",
-    placeholder="Example: What should leadership focus on based on these results?"
-)
+    if st.button("Generate Cortex Insight"):
+        prompt = f"""
+You are a sales analytics assistant for a homebuilder leadership team.
 
-if st.button("Generate Cortex Insight"):
-    if len(df) == 0:
-        st.warning("No data is available for the current filters.")
-    else:
-        if user_question.strip():
-            prompt = f"""
-{summary_context}
+Use the regional performance summary below to answer in business terms.
+
+Regional performance data:
+{regional_text}
+
+Current selected dashboard perspective: {perspective}
 
 User question:
-{user_question}
+{user_question if user_question else "Provide an executive summary of regional performance."}
 
-Answer the question using only the provided dashboard metrics.
-Provide:
-1. A direct answer
-2. Key supporting insight
-3. One recommendation for leadership
-"""
-        else:
-            prompt = f"""
-{summary_context}
-
-Generate an executive summary.
 Provide:
 1. Key performance insight
-2. Any risk or concern
-3. One recommendation for leadership
+2. Risk or concern
+3. Recommendation for leadership
+Keep the response concise and business-friendly.
 """
 
         safe_prompt = prompt.replace("'", "''")
@@ -550,11 +543,11 @@ Provide:
         SELECT SNOWFLAKE.CORTEX.COMPLETE(
             'mistral-large',
             '{safe_prompt}'
-        ) AS SUMMARY
+        ) AS AI_SUMMARY
         """
 
         with st.spinner("Generating Snowflake Cortex insight..."):
-            summary_df = pd.read_sql(cortex_query, conn)
+            ai_df = pd.read_sql(cortex_query, conn)
 
         st.markdown("### AI Response")
-        st.write(summary_df["SUMMARY"].iloc[0])
+        st.write(ai_df["AI_SUMMARY"].iloc[0])
